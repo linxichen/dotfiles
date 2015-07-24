@@ -10,13 +10,14 @@ cd fonts
 cd ..
 rm -rf fonts
 
-echo "installing vundle"
+echo "installing vundle ..."
 git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
-echo "linking dot files..."
+echo "linking dot files ..."
 ln -sf ~/GitHub/dotfiles/tmux/.tmux.conf ~/.tmux.conf
 ln -sf ~/GitHub/dotfiles/vim/.vimrc ~/.vimrc
+ln -sf ~/GitHub/dotfiles/macprofile/.profile ~/.profile
 
-echo "install and activate vim plugins"
+echo "install and activate vim plugins ..."
 vim +PluginInstall +q +q
 
