@@ -29,6 +29,7 @@ Plugin 'bling/vim-airline' " plugin that gives awesome status line
 Plugin 'scrooloose/syntastic' " pluging that checks syntax errors
 Plugin 'ntpeters/vim-better-whitespace' " plugin that display and removes trailing whitespaces
 Plugin 'edkolev/tmuxline.vim' " plugin that improves tmux status line
+Plugin 'junegunn/vim-easy-align' " plugin that help you easily align
 
 " Inactive plugins that you'd try later on
 " Plugin 'ervandew/screen' " required by VimLab to manage MATLAB session
