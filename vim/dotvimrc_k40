@@ -1,0 +1,103 @@
+" Linxi Chen's .vimrc
+"------------------------------------------------------------------------
+" Set file script encoding so that => is recognized
+"------------------------------------------------------------------------
+scriptencoding utf-8
+set encoding=utf-8
+
+"------------------------------------------------------------------------
+" Configure for Vundle.
+" Vundle required to be first configured. Most stuff from Nick Nisi.
+"------------------------------------------------------------------------
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" list all plugins that you'd like to install here
+Plugin 'gmarik/Vundle.vim' " let Vundle manage Vundle, required
+" Plugin 'kien/ctrlp.vim' " fuzzy find files
+" Plugin 'scrooloose/nerdtree' " file drawer, open with :NERDTreeToggle
+" Plugin 'tpope/vim-fugitive' " the ultimate git helper
+Plugin 'tpope/vim-commentary' " comment/uncomment lines with gcc or gc
+Plugin 'L9' " plugin from http://vim-scripts.org/vim/scripts.html
+Plugin 'Smart-Tabs' " plugin that uses tab for indent but space for alignment
+Plugin 'chriskempson/base16-vim' " all color scheme of base16
+Plugin 'bling/vim-airline' " plugin that gives awesome status line
+" Plugin 'scrooloose/syntastic' " pluging that checks syntax errors
+Plugin 'ntpeters/vim-better-whitespace' " plugin that display and removes trailing whitespaces
+Plugin 'edkolev/tmuxline.vim' " plugin that improves tmux status line
+
+" Inactive plugins that you'd try later on
+" Plugin 'ervandew/screen' " required by VimLab to manage MATLAB session
+" Plugin 'dajero/VimLab' " plugin to use MATLAB inside vim
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+" see :h vundle for more details or wiki for FAQ
+
+"------------------------------------------------------------------------
+" General settings
+"------------------------------------------------------------------------
+" See http://tedlogan.com/techblog3.html for an explaination of tabs in vim
+set noexpandtab                     " don't use space to replace tab
+set number                          " show line number
+set tabstop=4                       " set tab to be 4 columns wide, no more smart tabbing
+set softtabstop=4                   " how many columns when hit tab in insert mode
+set shiftwidth=4                    " how many columns indent is (using == >> <<)
+set cursorline                      " show underline of cursor
+set autoindent                      " always set autoindenting on
+set showmatch                       " To show briefly the matching bracket.
+set backspace=indent,eol,start      " allow backspacing over everything in insert mode
+set backup                          " keep a backup file
+set history=500                     " keep 50 lines of command line history
+set ruler                           " show the cursor position all the time
+set showcmd                         " display incomplete commands
+set incsearch                       " do incremental searching
+syntax on                           " switch syntax highlighting on
+set mouse=a                         " enable mouse in emulators
+set ttymouse=xterm2                 " mouse behave in the xterm way
+set hlsearch                        " enable highlighting words you are searching for
+set list                            " enable showing hidden characters like tab
+set listchars=tab:▸\                " use this nice little arrow to show tab
+set t_Co=256                        " set terminal to have 256 colors
+set background=dark                 " because I always prefere darkbackground
+colorscheme base16-ocean            " use the beautiful vim scheme base16-ocean
+set autoread                        " detect file change
+set ttyfast                         " faster redrawing?
+set clipboard=unnamed               " in OSX? merge vim and system clipboard
+set completeopt+=longest            " completion menu highlight the longeste common word first
+
+" Inactive settings, might play with later
+" set relativenumber                  " show relative line number
+
+"------------------------------------------------------------------------
+" vim-commentary settings
+"------------------------------------------------------------------------
+autocmd FileType matlab set commentstring=%\ %s
+
+"------------------------------------------------------------------------
+" vim-airline settings
+"------------------------------------------------------------------------
+set laststatus=2                    " alwyas show airline bar
+let g:airline_powerline_fonts = 1   " let the right triangle show up in statusline
+
+"------------------------------------------------------------------------
+" syntastic settings
+"------------------------------------------------------------------------
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
