@@ -14,9 +14,9 @@ echo "installing vundle ..."
 git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
 echo "linking dot files ..."
-ln -sf ~/GitHub/dotfiles/tmux/.tmux.conf ~/.tmux.conf
-ln -sf ~/GitHub/dotfiles/vim/.vimrc ~/.vimrc
-ln -sf ~/GitHub/dotfiles/macprofile/.profile ~/.profile
+ln -sf ~/GitHub/dotfiles/tmux/dottmuxdotconf ~/.tmux.conf
+ln -sf ~/GitHub/dotfiles/vim/dotvimrc ~/.vimrc
+ln -sf ~/GitHub/dotfiles/macprofile/dotprofile ~/.profile
 
 echo "install and activate vim plugins ..."
 vim +PluginInstall +q +q
