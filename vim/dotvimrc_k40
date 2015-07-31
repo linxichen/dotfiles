@@ -18,16 +18,16 @@ call vundle#begin()
 
 " list all plugins that you'd like to install here
 Plugin 'gmarik/Vundle.vim' " let Vundle manage Vundle, required
-" Plugin 'kien/ctrlp.vim' " fuzzy find files
-" Plugin 'scrooloose/nerdtree' " file drawer, open with :NERDTreeToggle
-" Plugin 'tpope/vim-fugitive' " the ultimate git helper
-" Plugin 'tpope/vim-commentary' " comment/uncomment lines with gcc or gc
-" Plugin 'L9' " plugin from http://vim-scripts.org/vim/scripts.html
-" Plugin 'Smart-Tabs' " plugin that uses tab for indent but space for alignment
-" Plugin 'chriskempson/base16-vim' " all color scheme of base16
-" Plugin 'bling/vim-airline' " plugin that gives awesome status line
-" Plugin 'scrooloose/syntastic' " pluging that checks syntax errors
-" Plugin 'ntpeters/vim-better-whitespace' " plugin that display and removes trailing whitespaces
+Plugin 'kien/ctrlp.vim' " fuzzy find files
+Plugin 'scrooloose/nerdtree' " file drawer, open with :NERDTreeToggle
+Plugin 'tpope/vim-fugitive' " the ultimate git helper
+Plugin 'tpope/vim-commentary' " comment/uncomment lines with gcc or gc
+Plugin 'L9' " plugin from http://vim-scripts.org/vim/scripts.html
+Plugin 'Smart-Tabs' " plugin that uses tab for indent but space for alignment
+Plugin 'chriskempson/base16-vim' " all color scheme of base16
+Plugin 'bling/vim-airline' " plugin that gives awesome status line
+Plugin 'scrooloose/syntastic' " pluging that checks syntax errors
+Plugin 'ntpeters/vim-better-whitespace' " plugin that display and removes trailing whitespaces
 " Plugin 'edkolev/tmuxline.vim' " plugin that improves tmux status line
 
 " Inactive plugins that you'd try later on
