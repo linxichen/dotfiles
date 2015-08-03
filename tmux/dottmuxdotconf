@@ -2,7 +2,11 @@
 # enable mouse support for switching panes/windows
 # NOTE: This breaks selecting/copying text on OSX
 # To select text as expected, hold Option to disable it (iTerm2)
-set -g mouse on
+# Use "if-shell" to run a bash command
+# # and check the version string of tmux
+if-shell "[[ `tmux -V` == *2.1 ]]" 'set -g mouse on'
+if-shell "[[ `tmux -V` != *2.1 ]]" 'set -g mode-mouse on;set -g mouse-resize-pane on;set -g mouse-select-pane on;set -g mouse-select-window on'
+
 
 # tmux display things in 256 colors
 set -g default-terminal "screen-256color"

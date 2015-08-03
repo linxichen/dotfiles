@@ -102,6 +102,9 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 0
 let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
+let g:syntastic_check_on_w = 0
+let g:syntastic_cpp_include_dirs = ['/usr/local/cuda-7.0/include','/Developer/NVIDIA/CUDA-7.0/include','/usr/local/include']
+let g:syntastic_cpp_compiler_options = '-std=c++11'
 
 "------------------------------------------------------------------------
 " easyalign settings
@@ -111,3 +114,9 @@ vmap <Enter> <Plug>(EasyAlign)
 
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
+
+"------------------------------------------------------------------------
+" CUDA syntax highlighting settings
+"------------------------------------------------------------------------
+au BufNewFile,BufRead *.cu set filetype=cuda
+au BufNewFile,BufRead *.cuh set filetype=cuda
