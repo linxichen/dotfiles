@@ -4,9 +4,14 @@
 # To select text as expected, hold Option to disable it (iTerm2)
 # Use "if-shell" to run a bash command
 # # and check the version string of tmux
-if-shell "[[ `tmux -V` == *2.1 ]]" 'set -g mouse on'
-if-shell "[[ `tmux -V` != *2.1 ]]" 'set -g mode-mouse on;set -g mouse-resize-pane on;set -g mouse-select-pane on;set -g mouse-select-window on'
+set -g mouse on
+set -g mode-mouse on
+set -g mouse-resize-pane on
+set -g mouse-select-pane on
+set -g mouse-select-window on
 
+# set history
+set -g history-limit 30000
 
 # tmux display things in 256 colors
 set -g default-terminal "screen-256color"
@@ -27,3 +32,13 @@ set -sg escape-time 0
 unbind C-b
 set -g prefix C-a
 bind C-a send-prefix
+
+# pane movement shortcuts
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+
+# split window and fix path for tmux 1.9
+bind | split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
