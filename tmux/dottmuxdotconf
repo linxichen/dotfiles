@@ -14,7 +14,7 @@ set -g mouse-select-window on
 set -g history-limit 30000
 
 # tmux display things in 256 colors
-set -g default-terminal "screen-256color"
+# set -g default-terminal "screen-256color"
 set -g status-utf8 on
 
 # automatically renumber tmux windows

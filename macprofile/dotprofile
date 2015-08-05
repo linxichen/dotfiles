@@ -18,6 +18,6 @@ export PATH=/Applications/MATLAB_R2015a.app/bin/maci64:$PATH
 export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
 # Finished adapting your PATH environment variable for use with MacPorts.
 
-# Base16 Shell
+# Base17 Shell
 BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
 [[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
