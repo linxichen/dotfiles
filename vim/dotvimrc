@@ -30,6 +30,7 @@ Plugin 'scrooloose/syntastic' " pluging that checks syntax errors
 Plugin 'ntpeters/vim-better-whitespace' " plugin that display and removes trailing whitespaces
 Plugin 'edkolev/tmuxline.vim' " plugin that improves tmux status line
 Plugin 'junegunn/vim-easy-align' " plugin that help you easily align
+Plugin 'altercation/vim-colors-solarized' " the famouse solarized color scheme
 
 " Inactive plugins that you'd try later on
 " Plugin 'ervandew/screen' " required by VimLab to manage MATLAB session
@@ -70,9 +71,9 @@ set ttymouse=xterm2                 " mouse behave in the xterm way
 set hlsearch                        " enable highlighting words you are searching for
 set list                            " enable showing hidden characters like tab
 set listchars=tab:▸\                " use this nice little arrow to show tab
-set t_Co=256                        " set terminal to have 256 colors
+set t_Co=16                         " set terminal to have 256 colors
 set background=dark                 " because I always prefere darkbackground
-colorscheme base16-ocean            " use the beautiful vim scheme base16-ocean
+colorscheme solarized               " use the beautiful vim scheme base16-ocean
 set autoread                        " detect file change
 set ttyfast                         " faster redrawing?
 set clipboard=unnamed               " in OSX? merge vim and system clipboard
