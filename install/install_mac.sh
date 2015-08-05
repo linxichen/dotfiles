@@ -21,3 +21,5 @@ ln -sf ~/GitHub/dotfiles/macprofile/dotprofile ~/.profile
 echo "install and activate vim plugins ..."
 vim +PluginInstall +q +q
 
+# Download Base16 shell so color is right even in tmux
+git clone https://github.com/chriskempson/base16-shell.git ~/.config/base16-shell

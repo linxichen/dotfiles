@@ -71,9 +71,10 @@ set ttymouse=xterm2                 " mouse behave in the xterm way
 set hlsearch                        " enable highlighting words you are searching for
 set list                            " enable showing hidden characters like tab
 set listchars=tab:▸\                " use this nice little arrow to show tab
-set t_Co=16                         " set terminal to have 256 colors
+let base16colorspace=256            " Access colors present in 256 colorspace"
+set t_Co=256                        " set terminal to have 256 colors
 set background=dark                 " because I always prefere darkbackground
-colorscheme solarized               " use the beautiful vim scheme base16-ocean
+colorscheme base16-default          " use the beautiful vim scheme base16-ocean
 set autoread                        " detect file change
 set ttyfast                         " faster redrawing?
 set clipboard=unnamed               " in OSX? merge vim and system clipboard
