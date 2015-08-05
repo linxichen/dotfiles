@@ -8,3 +8,6 @@ vim +PluginInstall +q +q
 
 # Download Base16 shell so color is right even in tmux
 git clone https://github.com/chriskempson/base16-shell.git ~/.config/base16-shell
+
+# Cp all scripts to /etc/profile.d
+sudo cp ../ubuntu_profile_d/*.sh /etc/profile.d/
