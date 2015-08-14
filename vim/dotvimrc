@@ -27,7 +27,7 @@ Plugin 'Smart-Tabs' " plugin that uses tab for indent but space for alignment
 Plugin 'chriskempson/base16-vim' " all color scheme of base16
 Plugin 'bling/vim-airline' " plugin that gives awesome status line
 Plugin 'scrooloose/syntastic' " pluging that checks syntax errors
-Plugin 'ntpeters/vim-better-whitespace' " plugin that display and removes trailing whitespaces
+Plugin 'ntpeters/vim-better-whitespace' "display and remove trailing whitespace
 Plugin 'edkolev/tmuxline.vim' " plugin that improves tmux status line
 Plugin 'junegunn/vim-easy-align' " plugin that help you easily align
 Plugin 'altercation/vim-colors-solarized' " the famouse solarized color scheme
@@ -42,45 +42,49 @@ filetype plugin indent on    " required
 
 " Brief help
 " :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+" :PluginInstall    - installs plugins;
+"                   - append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo;
+"                   - append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins;
+"                   - append `!` to auto-approve removal
 " see :h vundle for more details or wiki for FAQ
 
 "------------------------------------------------------------------------
 " General settings
 "------------------------------------------------------------------------
 " See http://tedlogan.com/techblog3.html for an explaination of tabs in vim
-set noexpandtab                     " don't use space to replace tab
-set number                          " show line number
-set tabstop=4                       " set tab to be 4 columns wide, no more smart tabbing
-set softtabstop=4                   " how many columns when hit tab in insert mode
-set shiftwidth=4                    " how many columns indent is (using == >> <<)
-set cursorline                      " show underline of cursor
-set autoindent                      " always set autoindenting on
-set showmatch                       " To show briefly the matching bracket.
-set backspace=indent,eol,start      " allow backspacing over everything in insert mode
-set backup                          " keep a backup file
-set history=500                     " keep 50 lines of command line history
-set ruler                           " show the cursor position all the time
-set showcmd                         " display incomplete commands
-set incsearch                       " do incremental searching
-syntax on                           " switch syntax highlighting on
-set mouse=a                         " enable mouse in emulators
-set ttymouse=xterm2                 " mouse behave in the xterm way
-set hlsearch                        " enable highlighting words you are searching for
-set list                            " enable showing hidden characters like tab
-set listchars=tab:▸\                " use this nice little arrow to show tab
-let base16colorspace=256            " Access colors present in 256 colorspace"
-set t_Co=256                        " set terminal to have 256 colors
-set background=dark                 " because I always prefere darkbackground
-colorscheme base16-default          " use the beautiful vim scheme base16-ocean
-set autoread                        " detect file change
-set ttyfast                         " faster redrawing?
-set clipboard=unnamed               " in OSX? merge vim and system clipboard
-set completeopt+=longest            " completion menu highlight the longeste common word first
-set textwidth=80                    " good old 80 char limit
-set wrap
+set noexpandtab                  " don't use space to replace tab
+set number                       " show line number
+set tabstop=4                    " set tab to be 4 columns wide
+set softtabstop=4                " # of columns when hit tab in insert mode
+set shiftwidth=4                 " # of columns indent is (using == >> <<)
+set cursorline                   " show underline of cursor
+set autoindent                   " always set autoindenting on
+set showmatch                    " To show briefly the matching bracket.
+set backspace=indent,eol,start   " backspacing over everything in insert mode
+set backup                       " keep a backup file
+set history=500                  " keep 50 lines of command line history
+set ruler                        " show the cursor position all the time
+set showcmd                      " display incomplete commands
+set incsearch                    " do incremental searching
+syntax on                        " switch syntax highlighting on
+set mouse=a                      " enable mouse in emulators
+set ttymouse=xterm2              " mouse behave in the xterm way
+set hlsearch                     " enable highlighting words you are searching
+set list                         " enable showing hidden characters like tab
+set listchars=tab:▸\             " use this nice little arrow to show tab
+let base16colorspace=256         " Access colors present in 256 colorspace
+set t_Co=256                     " set terminal to have 256 colors
+set background=dark              " because I always prefere darkbackground
+colorscheme base16-default       " use the beautiful vim scheme base16-ocean
+set autoread                     " detect file change
+set ttyfast                      " faster redrawing?
+set clipboard=unnamed            " in OSX? merge vim and system clipboard
+set completeopt+=longest         " completion show the longest common word first
+set textwidth=80                 " good old 80 char limit
+set formatoptions+=t             " auto-wrap text excl. comments
+set colorcolumn=+1               " vertical bar at tw+1 column
 
 " Inactive settings, might play with later
 " set relativenumber                  " show relative line number
@@ -93,8 +97,8 @@ autocmd FileType matlab set commentstring=%\ %s
 "------------------------------------------------------------------------
 " vim-airline settings
 "------------------------------------------------------------------------
-set laststatus=2                    " alwyas show airline bar
-let g:airline_powerline_fonts = 1   " let the right triangle show up in statusline
+set laststatus=2                  " alwyas show airline bar
+let g:airline_powerline_fonts = 1 " let the right triangle show up in statusline
 
 "------------------------------------------------------------------------
 " syntastic settings
@@ -107,7 +111,10 @@ let g:syntastic_auto_loc_list = 0
 let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
 let g:syntastic_check_on_w = 0
-let g:syntastic_cpp_include_dirs = ['/usr/local/cuda-7.0/include','/Developer/NVIDIA/CUDA-7.0/include','/usr/local/include']
+let my_includes = ['/usr/local/cuda-7.0/include']
+let my_includes += ['/Developer/NVIDIA/CUDA-7.0/include']
+let my_includes += ['/usr/local/include']
+let g:syntastic_cpp_include_dirs = my_includes
 let g:syntastic_cpp_compiler_options = '-std=c++11'
 
 "------------------------------------------------------------------------
