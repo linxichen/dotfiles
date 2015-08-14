@@ -79,6 +79,8 @@ set autoread                        " detect file change
 set ttyfast                         " faster redrawing?
 set clipboard=unnamed               " in OSX? merge vim and system clipboard
 set completeopt+=longest            " completion menu highlight the longeste common word first
+set textwidth=80                    " good old 80 char limit
+set wrap
 
 " Inactive settings, might play with later
 " set relativenumber                  " show relative line number
