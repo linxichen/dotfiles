@@ -114,6 +114,7 @@ let g:syntastic_check_on_w = 0
 let my_includes = ['/usr/local/cuda-7.0/include']
 let my_includes += ['/Developer/NVIDIA/CUDA-7.0/include']
 let my_includes += ['/usr/local/include']
+let my_includes += ['./cudatools/include']
 let g:syntastic_cpp_include_dirs = my_includes
 let g:syntastic_cpp_compiler_options = '-std=c++11'
 
