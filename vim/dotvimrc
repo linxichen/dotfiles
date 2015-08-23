@@ -23,14 +23,14 @@ Plugin 'scrooloose/nerdtree' " file drawer, open with :NERDTreeToggle
 Plugin 'tpope/vim-fugitive' " the ultimate git helper
 Plugin 'tpope/vim-commentary' " comment/uncomment lines with gcc or gc
 Plugin 'L9' " plugin from http://vim-scripts.org/vim/scripts.html
-Plugin 'Smart-Tabs' " plugin that uses tab for indent but space for alignment
+Plugin 'Smart-Tabs' " uses tab for indent but space for alignment
 Plugin 'chriskempson/base16-vim' " all color scheme of base16
 Plugin 'bling/vim-airline' " plugin that gives awesome status line
 Plugin 'scrooloose/syntastic' " pluging that checks syntax errors
-Plugin 'ntpeters/vim-better-whitespace' "display and remove trailing whitespace
+Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'edkolev/tmuxline.vim' " plugin that improves tmux status line
 Plugin 'junegunn/vim-easy-align' " plugin that help you easily align
-Plugin 'altercation/vim-colors-solarized' " the famouse solarized color scheme
+Plugin 'altercation/vim-colors-solarized'
 Plugin 'lervag/vimtex' " the light-feature latex vim plugin
 
 " Inactive plugins that you'd try later on
@@ -58,12 +58,12 @@ filetype plugin indent on    " required
 set noexpandtab                  " don't use space to replace tab
 set number                       " show line number
 set tabstop=4                    " set tab to be 4 columns wide
-set softtabstop=4                " # of columns when hit tab in insert mode
-set shiftwidth=4                 " # of columns indent is (using == >> <<)
+set softtabstop=4                " # of columns when hit tab
+set shiftwidth=4                 " # of columns indent is (== >> <<)
 set cursorline                   " show underline of cursor
 set autoindent                   " always set autoindenting on
 set showmatch                    " To show briefly the matching bracket.
-set backspace=indent,eol,start   " backspacing over everything in insert mode
+set backspace=indent,eol,start   " backspacing over everything
 set backup                       " keep a backup file
 set history=500                  " keep 50 lines of command line history
 set ruler                        " show the cursor position all the time
@@ -72,18 +72,18 @@ set incsearch                    " do incremental searching
 syntax on                        " switch syntax highlighting on
 set mouse=a                      " enable mouse in emulators
 set ttymouse=xterm2              " mouse behave in the xterm way
-set hlsearch                     " enable highlighting words you are searching
-set list                         " enable showing hidden characters like tab
-set listchars=tab:▸\             " use this nice little arrow to show tab
-let base16colorspace=256         " Access colors present in 256 colorspace
+set hlsearch                     " highlight words you are searching
+set list                         " showing hidden characters tab
+set listchars=tab:▸\             " nice little arrow to show tab
+let base16colorspace=256         " colors present in 256 colorspace
 set t_Co=256                     " set terminal to have 256 colors
-set background=dark              " because I always prefere darkbackground
-colorscheme base16-default       " use the beautiful vim scheme base16-ocean
+set background=dark              " 
+colorscheme base16-default       " use the scheme base16-ocean
 set autoread                     " detect file change
 set ttyfast                      " faster redrawing?
-set clipboard=unnamed            " in OSX? merge vim and system clipboard
-set completeopt+=longest         " completion show the longest common word first
-set textwidth=80                 " good old 80 char limit
+set clipboard=unnamed            " merge vim and system clipboard
+set completeopt+=longest         " show the longest common word first
+set textwidth=72                 " good old 72 char limit
 set formatoptions+=t             " auto-wrap text excl. comments
 set colorcolumn=+1               " vertical bar at tw+1 column
 
