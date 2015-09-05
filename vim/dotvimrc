@@ -84,6 +84,7 @@ set ttyfast                      " faster redrawing?
 set clipboard=unnamed            " merge vim and system clipboard
 set completeopt+=longest         " show the longest common word first
 set textwidth=72                 " good old 72 char limit
+autocmd FileType plaintex,tex,latex set textwidth=120
 set formatoptions+=t             " auto-wrap text excl. comments
 set colorcolumn=+1               " vertical bar at tw+1 column
 
@@ -133,3 +134,11 @@ nmap ga <Plug>(EasyAlign)
 "------------------------------------------------------------------------
 au BufNewFile,BufRead *.cu set filetype=cuda
 au BufNewFile,BufRead *.cuh set filetype=cuda
+
+
+"------------------------------------------------------------------------
+" vimtex settings to use skim
+"------------------------------------------------------------------------
+let g:vimtex_view_general_viewer
+\ = '/Applications/Skim.app/Contents/SharedSupport/displayline'
+let g:vimtex_view_general_options = '@line @pdf @tex'
