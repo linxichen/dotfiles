@@ -3,7 +3,7 @@
 wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/cuda-repo-ubuntu1404_7.0-28_amd64.deb -P ~/Downloads/
 sudo dpkg -i ~/Downloads/cuda-repo-ubuntu1404_7.0-28_amd64.deb
 sudo apt-get install cuda
-echo " echo '/usr/local/cuda-7.0/lib64' >> /etc/ld.so.conf.d/newtmux2.conf " | sudo sh
+echo " echo '/usr/local/cuda-7.0/lib64' >> /etc/ld.so.conf.d/cuda.conf " | sudo sh
 sudo ldconfig
 
 # Firstly update apt-get repo
@@ -48,7 +48,11 @@ echo 'export TERM=xterm-256color' >> ~/.bashrc
 # Download powerline fonts
 git clone https://github.com/powerline/fonts.git
 cd fonts
-sudo ./install
+sudo ./install.sh
+
+# Install profiles for terminal
+git clone https://github.com/chriskempson/base16-gnome-terminal.git ~/.config/base16-gnome-terminal
+source ~/.config/base16-gnome-terminal/base16-default.dark.sh
 
 # Cp all scripts to /etc/profile.d
 sudo cp ~/GitHub/dotfiles/ubuntu_profile_d/*.sh /etc/profile.d/

@@ -85,7 +85,7 @@ set clipboard=unnamed            " merge vim and system clipboard
 set completeopt+=longest         " show the longest common word first
 set textwidth=72                 " good old 72 char limit
 autocmd FileType plaintex,tex,latex set textwidth=120
-set formatoptions+=t             " auto-wrap text excl. comments
+" set formatoptions+=t             " auto-wrap text excl. comments
 set colorcolumn=+1               " vertical bar at tw+1 column
 
 " Inactive settings, might play with later
