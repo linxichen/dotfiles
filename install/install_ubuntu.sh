@@ -10,7 +10,7 @@ sudo ldconfig
 sudo apt-get update
 
 # Install core stuff like vim automake and ncurses
-sudo apt-get install vim vim-doc automake libncurses-dev git
+sudo apt-get install vim vim-doc automake libncurses-dev git -y
 
 # install libevent 2.0
 wget https://sourceforge.net/projects/levent/files/libevent/libevent-2.0/libevent-2.0.22-stable.tar.gz
@@ -57,4 +57,14 @@ source ~/.config/base16-gnome-terminal/base16-default.dark.sh
 # Cp all scripts to /etc/profile.d
 sudo cp ~/GitHub/dotfiles/ubuntu_profile_d/*.sh /etc/profile.d/
 
-# Finally run ldconfig for CUDA
+# Finally scientific stuff
+sudo apt-get install cmake libopenblas-dev liblapack-dev libarpack2-dev -y
+sudo apt-get install libarma* -y
+
+# Finally dropbox
+sudo apt-get install nautilus-dropbox -y
+nautilus --quit
+
+# Clean up a bit
+cd ~/GitHub/dotfiles/install
+rm -rf libevent*
