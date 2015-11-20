@@ -80,7 +80,7 @@ set t_Co=256                     " set terminal to have 256 colors
 set background=dark              " 
 colorscheme base16-default       " use the scheme base16-ocean
 set autoread                     " detect file change
-set ttyfast                      " faster redrawing?
+" set ttyfast                      " faster redrawing?
 set clipboard=unnamed            " merge vim and system clipboard
 set completeopt+=longest         " show the longest common word first
 set textwidth=72                 " good old 72 char limit
@@ -110,15 +110,21 @@ set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 0
-let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
-let g:syntastic_check_on_w = 0
+let g:syntastic_check_on_w = 1
 let my_includes = ['/usr/local/cuda-7.0/include']
 let my_includes += ['/Developer/NVIDIA/CUDA-7.0/include']
 let my_includes += ['/usr/local/include']
 let my_includes += ['./cudatools/include']
+let my_includes += ['.']
 let g:syntastic_cpp_include_dirs = my_includes
 let g:syntastic_cpp_compiler_options = '-std=c++11'
+let g:syntastic_nvcc_include_dirs = my_includes
+let g:syntastic_nvcc_compiler_options = '-std=c++11'
+let g:syntastic_c_include_dirs = my_includes
+let g:syntastic_cpp_check_header = 1
+let g:syntastic_cpp_remove_include_errors = 1
 
 "------------------------------------------------------------------------
 " easyalign settings

@@ -10,7 +10,8 @@ sudo ldconfig
 sudo apt-get update
 
 # Install core stuff like vim automake and ncurses
-sudo apt-get install htop openssh-server vim vim-doc automake libncurses-dev git -y
+sudo apt-get install htop openssh-server vim vim-doc automake -y
+sudo apt-get install texlive-full libncurses-dev git -y
 
 # install libevent 2.0
 wget https://sourceforge.net/projects/levent/files/libevent/libevent-2.0/libevent-2.0.22-stable.tar.gz
