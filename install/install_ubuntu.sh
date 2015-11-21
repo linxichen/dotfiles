@@ -3,7 +3,7 @@
 wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/cuda-repo-ubuntu1404_7.0-28_amd64.deb -P ~/Downloads/
 sudo dpkg -i ~/Downloads/cuda-repo-ubuntu1404_7.0-28_amd64.deb
 sudo apt-get install cuda
-echo " echo '/usr/local/cuda-7.0/lib64' >> /etc/ld.so.conf.d/cuda.conf " | sudo sh
+echo " echo '/usr/local/cuda-7.5/lib64' >> /etc/ld.so.conf.d/cuda.conf " | sudo sh
 sudo ldconfig
 
 # Firstly update apt-get repo

@@ -4,5 +4,5 @@ BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
 if [ -e /usr/share/terminfo/x/xterm-256color ]; then
 	export TERM='xterm-256color'
 else
-	export TERM='xterm-color'
+	export TERM='xterm-256color'
 fi

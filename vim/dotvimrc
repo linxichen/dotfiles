@@ -77,7 +77,7 @@ set list                         " showing hidden characters tab
 set listchars=tab:▸\             " nice little arrow to show tab
 let base16colorspace=256         " colors present in 256 colorspace
 set t_Co=256                     " set terminal to have 256 colors
-set background=dark              " 
+set background=dark              "
 colorscheme base16-default       " use the scheme base16-ocean
 set autoread                     " detect file change
 " set ttyfast                      " faster redrawing?
@@ -113,8 +113,10 @@ let g:syntastic_auto_loc_list = 0
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_check_on_w = 1
-let my_includes = ['/usr/local/cuda-7.0/include']
-let my_includes += ['/Developer/NVIDIA/CUDA-7.0/include']
+let my_includes = ['/usr/local/cuda-7.5/include']
+let my_includes = ['/usr/local/cuda-7.5/include/thrust']
+let my_includes += ['/Developer/NVIDIA/CUDA-7.5/include']
+let my_includes += ['/Developer/NVIDIA/CUDA-7.5/include/thrust']
 let my_includes += ['/usr/local/include']
 let my_includes += ['./cudatools/include']
 let my_includes += ['.']
