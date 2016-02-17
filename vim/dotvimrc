@@ -25,13 +25,15 @@ Plugin 'tpope/vim-commentary' " comment/uncomment lines with gcc or gc
 Plugin 'L9' " plugin from http://vim-scripts.org/vim/scripts.html
 Plugin 'Smart-Tabs' " uses tab for indent but space for alignment
 Plugin 'chriskempson/base16-vim' " all color scheme of base16
-Plugin 'bling/vim-airline' " plugin that gives awesome status line
 Plugin 'scrooloose/syntastic' " pluging that checks syntax errors
 Plugin 'ntpeters/vim-better-whitespace'
+Plugin 'vim-airline/vim-airline' " plugin that gives awesome status line
+Plugin 'vim-airline/vim-airline-themes'
 Plugin 'edkolev/tmuxline.vim' " plugin that improves tmux status line
 Plugin 'junegunn/vim-easy-align' " plugin that help you easily align
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'lervag/vimtex' " the light-feature latex vim plugin
+Plugin 'Valloric/YouCompleteMe' " the powerful complettion plugin
 
 " Inactive plugins that you'd try later on
 " Plugin 'ervandew/screen' " required by VimLab to manage MATLAB session
@@ -77,7 +79,7 @@ set list                         " showing hidden characters tab
 set listchars=tab:▸\             " nice little arrow to show tab
 let base16colorspace=256         " colors present in 256 colorspace
 set t_Co=256                     " set terminal to have 256 colors
-set background=dark              "
+set background=dark              " stuff
 colorscheme base16-default       " use the scheme base16-ocean
 set autoread                     " detect file change
 " set ttyfast                      " faster redrawing?
@@ -101,6 +103,8 @@ autocmd FileType matlab set commentstring=%\ %s
 "------------------------------------------------------------------------
 set laststatus=2                  " alwyas show airline bar
 let g:airline_powerline_fonts = 1 " let the right triangle show up in statusline
+let g:airline#extensions#whitespace#mixed_indent_algo = 2 "ok space after tab
+let g:airline#extensions#whitespace#checks = [ 'indent', 'trailing', 'long']
 
 "------------------------------------------------------------------------
 " syntastic settings
@@ -150,3 +154,23 @@ au BufNewFile,BufRead *.cuh set filetype=cuda
 let g:vimtex_view_general_viewer
 \ = '/Applications/Skim.app/Contents/SharedSupport/displayline'
 let g:vimtex_view_general_options = '@line @pdf @tex'
+let g:vimtex_fold_enabled=1
+
+"------------------------------------------------------------------------
+" Youcomplete me settings to use with vimtex
+"------------------------------------------------------------------------
+if !exists('g:ycm_semantic_triggers')
+	let g:ycm_semantic_triggers = {}
+endif
+let g:ycm_semantic_triggers.tex = [
+			\ 're!\\[A-Za-z]*(ref|cite)[A-Za-z]*([^]]*])?{([^}]*,?)*',
+			\ 're!\\includegraphics([^]]*])?{[^}]*',
+			\ 're!\\(include(only)?|input)\{[^{}]*'
+			\ ]
+let g:ycm_register_as_syntastic_checker = 0
+
+"------------------------------------------------------------------------
+" better whitespace settings
+"------------------------------------------------------------------------
+let g:better_whitespace_verbosity=1
+let g:better_whitespace_filetypes_blacklist=['.tex']
