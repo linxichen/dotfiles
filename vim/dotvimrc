@@ -102,9 +102,12 @@ autocmd FileType matlab set commentstring=%\ %s
 " vim-airline settings
 "------------------------------------------------------------------------
 set laststatus=2                  " alwyas show airline bar
-let g:airline_powerline_fonts = 1 " let the right triangle show up in statusline
-let g:airline#extensions#whitespace#mixed_indent_algo = 2 "ok space after tab
-let g:airline#extensions#whitespace#checks = [ 'indent', 'trailing', 'long']
+" let the right triangle show up in statusline
+let g:airline_powerline_fonts = 1
+"ok space after tab below
+let g:airline#extensions#whitespace#mixed_indent_algo = 2
+let g:airline#extensions#whitespace#checks = [ 'indent', 'trailing']
+let g:airline#extensions#whitespace#checks += ['long']
 
 "------------------------------------------------------------------------
 " syntastic settings
@@ -151,9 +154,15 @@ au BufNewFile,BufRead *.cuh set filetype=cuda
 "------------------------------------------------------------------------
 " vimtex settings to use skim
 "------------------------------------------------------------------------
-let g:vimtex_view_general_viewer
-\ = '/Applications/Skim.app/Contents/SharedSupport/displayline'
-let g:vimtex_view_general_options = '@line @pdf @tex'
+if has("mac")
+	let g:vimtex_view_general_viewer
+	\ = '/Applications/Skim.app/Contents/SharedSupport/displayline'
+	let g:vimtex_view_general_options = '@line @pdf @tex'
+elseif has("unix")
+	let g:vimtex_view_general_viewer = 'okular'
+	let g:vimtex_view_general_options = '--unique @pdf\#src:@line@tex'
+	let g:vimtex_view_general_options_latexmk = '--unique'
+endif
 let g:vimtex_fold_enabled=1
 
 "------------------------------------------------------------------------

@@ -1,1 +1,7 @@
-set guifont=Inconsolata-g\ for\ Powerline:h12
+if has("gui_running")
+	if has('mac')
+		set guifont=Inconsolata-g\ for\ Powerline:h12
+	elseif has('unix')
+		set gfn=Ubuntu\ Mono\ derivative\ Powerline\ 12
+	endif
+endif
