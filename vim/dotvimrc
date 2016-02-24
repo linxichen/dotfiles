@@ -32,8 +32,11 @@ Plugin 'vim-airline/vim-airline-themes'
 Plugin 'edkolev/tmuxline.vim' " plugin that improves tmux status line
 Plugin 'junegunn/vim-easy-align' " plugin that help you easily align
 Plugin 'altercation/vim-colors-solarized'
-Plugin 'lervag/vimtex' " the light-feature latex vim plugin
-Plugin 'Valloric/YouCompleteMe' " the powerful complettion plugin
+" Plugin 'lervag/vimtex' " the light-feature latex vim plugin
+" Plugin 'vim-latex/vim-latex' " the light-feature latex vim plugin
+Plugin 'git://git.code.sf.net/p/vim-latex/vim-latex' " LaTex-Suite
+" Plugin 'Valloric/YouCompleteMe' " the powerful complettion plugin
+Plugin 'ervandew/supertab' " used tab for complete
 
 " Inactive plugins that you'd try later on
 " Plugin 'ervandew/screen' " required by VimLab to manage MATLAB session
@@ -89,6 +92,7 @@ set textwidth=80                 " good old 72 char limit
 autocmd FileType plaintex,tex,latex set textwidth=80
 " set formatoptions+=t             " auto-wrap text excl. comments
 set colorcolumn=+1               " vertical bar at tw+1 column
+set omnifunc=syntaxcomplete#Complete " enables omni complete
 
 " Inactive settings, might play with later
 " set relativenumber                  " show relative line number
@@ -166,17 +170,57 @@ endif
 let g:vimtex_fold_enabled=1
 
 "------------------------------------------------------------------------
+" vim-latex, aka LaTex-Suite settings
+"------------------------------------------------------------------------
+" IMPORTANT: grep will sometimes skip displaying the file name if you
+" search in a singe file. This will confuse Latex-Suite. Set your grep
+" program to always generate a file-name.
+set grepprg=grep\ -nH\ $*
+" OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
+" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
+" The following changes the default filetype back to 'tex':
+let g:tex_flavor='latex'
+" Change default target to pdf, if not dvi is used
+let g:Tex_DefaultTargetFormat = 'pdf'
+" Setup the compile rule for pdf to use pdflatex with synctex enabled
+let g:Tex_CompileRule_ps = 'dvips -Pwww -o $*.ps $*.dvi'
+let g:Tex_CompileRule_pspdf = 'ps2pdf $*.ps'
+let g:Tex_CompileRule_dvipdf = 'dvipdfm $*.dvi'
+let g:Tex_CompileRule_pdf = 'pdflatex -synctex=1 --interaction=nonstopmode $*'
+" PDF display rule
+let g:Tex_ViewRule_dvi = 'texniscope'
+let g:Tex_ViewRule_ps = 'Preview'
+let g:Tex_ViewRule_pdf = 'Skim'
+let g:Tex_FormatDependency_ps  = 'dvi,ps'
+let g:Tex_FormatDependency_pspdf = 'dvi,ps,pspdf'
+let g:Tex_FormatDependency_dvipdf = 'dvi,dvipdf'
+
+" map ,ll <leader>ll
+
+" " ,ls to forward search
+" map ,ls :w<CR>:silent !/Applications/Skim.app/Contents/SharedSupport/displayline -r <C-r>=line('.')<CR> %<.pdf %<CR><CR>
+
+" " ,lv to display pdf
+" map ,lv <leader>lv
+
+"------------------------------------------------------------------------
 " Youcomplete me settings to use with vimtex
 "------------------------------------------------------------------------
-if !exists('g:ycm_semantic_triggers')
-	let g:ycm_semantic_triggers = {}
-endif
-let g:ycm_semantic_triggers.tex = [
-			\ 're!\\[A-Za-z]*(ref|cite)[A-Za-z]*([^]]*])?{([^}]*,?)*',
-			\ 're!\\includegraphics([^]]*])?{[^}]*',
-			\ 're!\\(include(only)?|input)\{[^{}]*'
-			\ ]
-let g:ycm_register_as_syntastic_checker = 0
+" if !exists('g:ycm_semantic_triggers')
+" 	let g:ycm_semantic_triggers = {}
+" endif
+" let g:ycm_semantic_triggers.tex = [
+" 			\ 're!\\[A-Za-z]*(ref|cite)[A-Za-z]*([^]]*])?{([^}]*,?)*',
+" 			\ 're!\\includegraphics([^]]*])?{[^}]*',
+" 			\ 're!\\(include(only)?|input)\{[^{}]*'
+" 			\ ]
+" let g:ycm_register_as_syntastic_checker = 0
+
+
+"------------------------------------------------------------------------
+" Youcomplete me settings to use with C++ family
+"------------------------------------------------------------------------
+let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py" " for C++
 
 "------------------------------------------------------------------------
 " better whitespace settings
