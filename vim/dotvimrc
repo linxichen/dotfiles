@@ -89,7 +89,7 @@ set autoread                     " detect file change
 set clipboard=unnamed            " merge vim and system clipboard
 set completeopt+=longest         " show the longest common word first
 set textwidth=80                 " good old 72 char limit
-autocmd FileType plaintex,tex,latex set textwidth=80
+autocmd FileType plaintex,tex,latex set textwidth=120
 " set formatoptions+=t             " auto-wrap text excl. comments
 set colorcolumn=+1               " vertical bar at tw+1 column
 set omnifunc=syntaxcomplete#Complete " enables omni complete
