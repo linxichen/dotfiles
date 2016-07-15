@@ -84,7 +84,7 @@ set listchars=tab:▸\                 " nice little arrow to show tab
 let base16colorspace=256             " colors present in 256 colorspace
 set t_Co=256                         " set terminal to have 256 colors
 set background=dark                  " stuff
-colorscheme base16-default           " use the scheme base16-ocean
+colorscheme base16-solarized           " use the scheme base16-ocean
 set autoread                         " detect file change
 set clipboard=unnamed                " merge vim and system clipboard
 set completeopt+=longest             " show the longest common word first
@@ -92,6 +92,7 @@ set textwidth=80                     " good old 72 char limit
 autocmd FileType plaintex,tex,latex set textwidth=120
 set colorcolumn=+1                   " vertical bar at tw+1 column
 set omnifunc=syntaxcomplete#Complete " enables omni complete
+set backupdir=~/.vim//             " set  backupdir to avoid ~ after ext
 
 " Inactive settings, might play with later
 " set relativenumber                  " show relative line number
