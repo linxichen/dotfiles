@@ -34,7 +34,7 @@ Plugin 'junegunn/vim-easy-align' " plugin that help you easily align
 Plugin 'altercation/vim-colors-solarized'
 " Plugin 'lervag/vimtex' " the light-feature latex vim plugin
 " Plugin 'vim-latex/vim-latex' " the light-feature latex vim plugin
-Plugin 'git://git.code.sf.net/p/vim-latex/vim-latex' " LaTex-Suite
+Plugin 'vim-latex/vim-latex' " LaTex-Suite
 " Plugin 'Valloric/YouCompleteMe' " the powerful complettion plugin
 Plugin 'ervandew/supertab' " used tab for complete
 Plugin 'vimoutliner/vimoutliner' " used tab for complete
@@ -84,7 +84,7 @@ set listchars=tab:▸\                 " nice little arrow to show tab
 let base16colorspace=256             " colors present in 256 colorspace
 set t_Co=256                         " set terminal to have 256 colors
 set background=dark                  " stuff
-colorscheme base16-solarized           " use the scheme base16-ocean
+colorscheme base16-tomorrow-night    " use the scheme base16-ocean
 set autoread                         " detect file change
 set clipboard=unnamed                " merge vim and system clipboard
 set completeopt+=longest             " show the longest common word first
@@ -156,6 +156,10 @@ nmap ga <Plug>(EasyAlign)
 au BufNewFile,BufRead *.cu set filetype=cuda
 au BufNewFile,BufRead *.cuh set filetype=cuda
 
+"------------------------------------------------------------------------
+" Dynare syntax highlighting 
+"------------------------------------------------------------------------
+au BufNewFile,BufRead *.mod set filetype=c
 
 "------------------------------------------------------------------------
 " vimtex settings to use skim
@@ -196,14 +200,6 @@ let g:Tex_ViewRule_pdf = 'Skim'
 let g:Tex_FormatDependency_ps  = 'dvi,ps'
 let g:Tex_FormatDependency_pspdf = 'dvi,ps,pspdf'
 let g:Tex_FormatDependency_dvipdf = 'dvi,dvipdf'
-
-" map ,ll <leader>ll
-
-" " ,ls to forward search
-" map ,ls :w<CR>:silent !/Applications/Skim.app/Contents/SharedSupport/displayline -r <C-r>=line('.')<CR> %<.pdf %<CR><CR>
-
-" " ,lv to display pdf
-" map ,lv <leader>lv
 
 "------------------------------------------------------------------------
 " Youcomplete me settings to use with vimtex

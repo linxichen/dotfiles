@@ -5,6 +5,7 @@ alias myserver='ssh -Y linxi@lc147-01.econ.duke.edu'
 alias myserverdisplay='ssh -X -Y linxi@lc147-01.econ.duke.edu'
 alias moshmyserver='mosh linxi@lc147-01.econ.duke.edu'
 alias matlab='/Applications/MATLAB_R2015a.app/bin/matlab -nodesktop -nosplash'
+alias journal='cd ~/Dropbox/journal'
 alias invprice='cd ~/Dropbox/jack_linxi/investment\ goods\ price\ and\ uncertainty\ shock\ model/code/final_form/Converged_quarterly'
 # alias vim='vim --servername=foo'
 
