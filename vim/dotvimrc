@@ -17,27 +17,28 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 " list all plugins that you'd like to install here
-Plugin 'gmarik/Vundle.vim' " let Vundle manage Vundle, required
-Plugin 'kien/ctrlp.vim' " fuzzy find files
-Plugin 'scrooloose/nerdtree' " file drawer, open with :NERDTreeToggle
-Plugin 'tpope/vim-fugitive' " the ultimate git helper
-Plugin 'tpope/vim-commentary' " comment/uncomment lines with gcc or gc
-Plugin 'L9' " plugin from http://vim-scripts.org/vim/scripts.html
-Plugin 'Smart-Tabs' " uses tab for indent but space for alignment
+Plugin 'gmarik/Vundle.vim'       " let Vundle manage Vundle, required
+Plugin 'kien/ctrlp.vim'          " fuzzy find files
+Plugin 'scrooloose/nerdtree'     " file drawer, open with :NERDTreeToggle
+Plugin 'tpope/vim-fugitive'      " the ultimate git helper
+Plugin 'tpope/vim-commentary'    " comment/uncomment lines with gcc or gc
+Plugin 'L9'                      " plugin from http://vim-scripts.org
+Plugin 'Smart-Tabs'              " uses tab for indent but space for alignment
 Plugin 'chriskempson/base16-vim' " all color scheme of base16
-Plugin 'scrooloose/syntastic' " pluging that checks syntax errors
+Plugin 'scrooloose/syntastic'    " pluging that checks syntax errors
 Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'vim-airline/vim-airline' " plugin that gives awesome status line
 Plugin 'vim-airline/vim-airline-themes'
-Plugin 'edkolev/tmuxline.vim' " plugin that improves tmux status line
+Plugin 'edkolev/tmuxline.vim'    " plugin that improves tmux status line
 Plugin 'junegunn/vim-easy-align' " plugin that help you easily align
 Plugin 'altercation/vim-colors-solarized'
 " Plugin 'lervag/vimtex' " the light-feature latex vim plugin
 " Plugin 'vim-latex/vim-latex' " the light-feature latex vim plugin
-Plugin 'vim-latex/vim-latex' " LaTex-Suite
+Plugin 'vim-latex/vim-latex'     " LaTex-Suite
 " Plugin 'Valloric/YouCompleteMe' " the powerful complettion plugin
-Plugin 'ervandew/supertab' " used tab for complete
-Plugin 'vimoutliner/vimoutliner' " used tab for complete
+Plugin 'ervandew/supertab'       " used tab for complete
+Plugin 'vimoutliner/vimoutliner' " the awesome outliner
+Plugin 'tpope/vim-surround'      " powerful surround plugin
 
 " Inactive plugins that you'd try later on
 " Plugin 'ervandew/screen' " required by VimLab to manage MATLAB session
@@ -157,7 +158,7 @@ au BufNewFile,BufRead *.cu set filetype=cuda
 au BufNewFile,BufRead *.cuh set filetype=cuda
 
 "------------------------------------------------------------------------
-" Dynare syntax highlighting 
+" Dynare syntax highlighting
 "------------------------------------------------------------------------
 au BufNewFile,BufRead *.mod set filetype=c
 
