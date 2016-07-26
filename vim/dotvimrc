@@ -20,7 +20,7 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim'       " let Vundle manage Vundle, required
 Plugin 'kien/ctrlp.vim'          " fuzzy find files
 Plugin 'scrooloose/nerdtree'     " file drawer, open with :NERDTreeToggle
-Plugin 'tpope/vim-fugitive'      " the ultimate git helper
+" Plugin 'tpope/vim-fugitive'      " the ultimate git helper
 Plugin 'tpope/vim-commentary'    " comment/uncomment lines with gcc or gc
 Plugin 'L9'                      " plugin from http://vim-scripts.org
 Plugin 'Smart-Tabs'              " uses tab for indent but space for alignment
@@ -32,10 +32,7 @@ Plugin 'vim-airline/vim-airline-themes'
 Plugin 'edkolev/tmuxline.vim'    " plugin that improves tmux status line
 Plugin 'junegunn/vim-easy-align' " plugin that help you easily align
 Plugin 'altercation/vim-colors-solarized'
-" Plugin 'lervag/vimtex' " the light-feature latex vim plugin
-" Plugin 'vim-latex/vim-latex' " the light-feature latex vim plugin
 Plugin 'vim-latex/vim-latex'     " LaTex-Suite
-" Plugin 'Valloric/YouCompleteMe' " the powerful complettion plugin
 Plugin 'ervandew/supertab'       " used tab for complete
 Plugin 'vimoutliner/vimoutliner' " the awesome outliner
 Plugin 'tpope/vim-surround'      " powerful surround plugin
@@ -43,6 +40,8 @@ Plugin 'tpope/vim-surround'      " powerful surround plugin
 " Inactive plugins that you'd try later on
 " Plugin 'ervandew/screen' " required by VimLab to manage MATLAB session
 " Plugin 'dajero/VimLab' " plugin to use MATLAB inside vim
+" Plugin 'lervag/vimtex' " the light-feature latex vim plugin
+" Plugin 'Valloric/YouCompleteMe' " the powerful complettion plugin
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -214,7 +213,6 @@ let g:Tex_FormatDependency_dvipdf = 'dvi,dvipdf'
 " 			\ 're!\\(include(only)?|input)\{[^{}]*'
 " 			\ ]
 " let g:ycm_register_as_syntastic_checker = 0
-
 
 "------------------------------------------------------------------------
 " Youcomplete me settings to use with C++ family
