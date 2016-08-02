@@ -36,6 +36,8 @@ Plugin 'vim-latex/vim-latex'     " LaTex-Suite
 Plugin 'ervandew/supertab'       " used tab for complete
 Plugin 'vimoutliner/vimoutliner' " the awesome outliner
 Plugin 'tpope/vim-surround'      " powerful surround plugin
+Plugin 'tpope/vim-speeddating'   " C-a and C-x to change time
+Plugin 'jceb/vim-orgmode'
 
 " Inactive plugins that you'd try later on
 " Plugin 'ervandew/screen' " required by VimLab to manage MATLAB session

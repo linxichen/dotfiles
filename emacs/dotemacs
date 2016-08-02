@@ -1,0 +1,354 @@
+;; they say this goes to the top
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("878e22a7fe00ca4faba87b4f16bc269b8d2be5409d1c513bb7eda025da7c1cf4" "e87a2bd5abc8448f8676365692e908b709b93f2d3869c42a4371223aab7d9cf8" "15348febfa2266c4def59a08ef2846f6032c0797f001d7b9148f30ace0d08bcf" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default)))
+ '(org-agenda-files (quote ("~/Dropbox/org/deep.org"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+(require 'package) ;; You might already have this line
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
+(when (< emacs-major-version 24)
+  ;; For important compatibility libraries like cl-lib
+  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+(package-initialize) ;; You might already have this line
+
+;; auto install packges
+(defun ensure-package-installed (&rest packages)
+  "Assure every package is installed, ask for installation if it’s not.
+
+Return a list of installed packages or nil for every skipped package."
+  (mapcar
+   (lambda (package)
+     (if (package-installed-p package)
+         nil
+       (if (y-or-n-p (format "Package %s is missing. Install it? " package))
+           (package-install package)
+         package)))
+   packages))
+
+;; Make sure to have downloaded archive description.
+(or (file-exists-p package-user-dir)
+    (package-refresh-contents))
+
+;; Activate installed packages
+(package-initialize)
+
+;; Assuming you wish to install "iedit" and "magit"
+(ensure-package-installed 'org
+                          'evil
+                          'evil-leader
+                          'evil-surround
+                          'evil-org
+                          'exec-path-from-shell
+                          'smart-mode-line
+                          'solarized-theme
+                          'powerline
+                          'powerline-evil
+                          'auctex
+                          'flatui-theme
+                          'airline-themes
+                          'org-bullets
+                          )
+
+;; disable splash scren
+(setq inhibit-startup-screen t)
+
+;; wrap like vim
+(global-visual-line-mode 1)
+
+;; org-mode facelift
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+(setq line-spacing '0.25)
+;; (add-hook 'org-mode-hook (lambda () (variable-pitch-mode t)))
+
+;; Evil model related
+(require 'evil-leader)
+(global-evil-leader-mode)
+(require 'evil-org)
+(require 'evil)
+(evil-mode t)
+
+;; abosrd exec path so auctex can work
+(exec-path-from-shell-initialize)
+
+;; set font size
+(set-face-attribute 'default (selected-frame) :height 160)
+
+;; smart mode line
+;; (sml/setup)
+
+;; load-theme first
+(load-theme 'solarized-light)
+
+;; powerline setup
+(require 'powerline)
+(powerline-vim-theme)
+(setq ns-use-srgb-colorspace nil) ;; this fixes weird arrow
+(require 'airline-themes)
+(load-theme 'airline-sol)
+
+;; evil takes over calendar
+(evil-set-initial-state 'calendar-mode 'normal)
+
+;; evil-surround may be useful
+(require 'evil-surround)
+(require 'cl)
+(global-evil-surround-mode 1)
+
+;; org-mode customization
+(setq org-agenda-start-on-weekday nil)
+(setq org-log-done t)
+(eval-after-load 'org-agenda
+ '(progn
+    (evil-set-initial-state 'org-agenda-mode 'normal)
+    (evil-define-key 'normal org-agenda-mode-map
+      (kbd "<RET>") 'org-agenda-switch-to
+      (kbd "\t") 'org-agenda-goto
+      "q" 'org-agenda-quit
+      "r" 'org-agenda-redo
+      "S" 'org-save-all-org-buffers
+      "gj" 'org-agenda-goto-date
+      "gJ" 'org-agenda-clock-goto
+      "gm" 'org-agenda-bulk-mark
+      "go" 'org-agenda-open-link
+      "s" 'org-agenda-schedule
+      "+" 'org-agenda-priority-up
+      "," 'org-agenda-priority
+      "-" 'org-agenda-priority-down
+      "y" 'org-agenda-todo-yesterday
+      "n" 'org-agenda-add-note
+      "t" 'org-agenda-todo
+      ":" 'org-agenda-set-tags
+      ";" 'org-timer-set-timer
+      "I" 'helm-org-task-file-headings
+      "i" 'org-agenda-clock-in-avy
+      "O" 'org-agenda-clock-out-avy
+      "u" 'org-agenda-bulk-unmark
+      "x" 'org-agenda-exit
+      "j"  'org-agenda-next-line
+      "k"  'org-agenda-previous-line
+      "vt" 'org-agenda-toggle-time-grid
+      "va" 'org-agenda-archives-mode
+      "vw" 'org-agenda-week-view
+      "vl" 'org-agenda-log-mode
+      "vd" 'org-agenda-day-view
+      "vc" 'org-agenda-show-clocking-issues
+      "g/" 'org-agenda-filter-by-tag
+      "o" 'delete-other-windows
+      "gh" 'org-agenda-holiday
+      "gv" 'org-agenda-view-mode-dispatch
+      "f" 'org-agenda-later
+      "b" 'org-agenda-earlier
+      "c" 'helm-org-capture-templates
+      "e" 'org-agenda-set-effort
+      "n" nil  ; evil-search-next
+      "{" 'org-agenda-manipulate-query-add-re
+      "}" 'org-agenda-manipulate-query-subtract-re
+      "A" 'org-agenda-toggle-archive-tag
+      "." 'org-agenda-goto-today
+      "0" 'evil-digit-argument-or-evil-beginning-of-line
+      "<" 'org-agenda-filter-by-category
+      ">" 'org-agenda-date-prompt
+      "F" 'org-agenda-follow-mode
+      "D" 'org-agenda-deadline
+      "H" 'org-agenda-holidays
+      "J" 'org-agenda-next-date-line
+      "K" 'org-agenda-previous-date-line
+      "L" 'org-agenda-recenter
+      "P" 'org-agenda-show-priority
+      "R" 'org-agenda-clockreport-mode
+      "Z" 'org-agenda-sunrise-sunset
+      "T" 'org-agenda-show-tags
+      "X" 'org-agenda-clock-cancel
+      "[" 'org-agenda-manipulate-query-add
+      "g\\" 'org-agenda-filter-by-tag-refine
+      "]" 'org-agenda-manipulate-query-subtract
+      )))
+
+;; normal state shortcuts
+(evil-define-key 'normal evil-org-mode-map
+  "gh" 'outline-up-heading
+  "gp" 'outline-previous-heading
+  "gj" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
+	   'org-forward-same-level
+	  'org-forward-heading-same-level)
+  "gk" (if (fboundp 'org-backward-same-level)
+	   'org-backward-same-level
+	  'org-backward-heading-same-level)
+  "gl" 'outline-next-visible-heading
+  "t" 'org-todo
+  "T" '(lambda () (interactive) (evil-org-eol-call (lambda() (org-insert-todo-heading nil))))
+  "H" 'org-shiftleft
+  "J" 'org-shiftdown
+  "K" 'org-shiftup
+  "L" 'org-shiftright
+  "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
+  "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
+  "$" 'org-end-of-line
+  "^" 'org-beginning-of-line
+  "<" 'org-metaleft
+  ">" 'org-metaright
+  "-" 'org-cycle-list-bullet
+  (kbd "<tab>") 'org-cycle)
+
+;; my own leader maps
+(evil-leader/set-key-for-mode 'org-mode
+  "t"  'org-show-todo-tree
+  "a"  'org-agenda
+  "n"  'org-narrow-to-subtree
+  "w"  'widen
+  "l"  'evil-org-open-links
+  "o"  'evil-org-recompute-clocks
+  "s"  'org-schedule
+  "d"  'org-deadline
+  "r"  'org-archive-subtree-default
+)
+
+;; kinda force agenda to show vertically
+(defadvice org-agenda (around split-vertically activate)
+  (let ((split-width-threshold 90))
+    ad-do-it))
+
+;; open agenda when start up
+(find-file "~/Dropbox/org/deep.org")
+(org-agenda nil "a")
+
+;; These faces go pretty well with the flatui theme from 
+;; https://github.com/Corsair/emacs-flatui-theme
+
+;; '(org-agenda-date ((t (:inherit org-agenda-structure :weight semi-bold :height 1.2))) t)
+;; '(org-date ((t (:foreground "Purple" :underline t :height 0.8 :family "Helvetica Neue"))))
+;; '(org-done ((t (:foreground "gray57" :weight light))))
+;; '(org-link ((t (:inherit link :weight normal))))
+;; '(org-meta-line ((t (:inherit font-lock-comment-face :height 0.8))))
+;; '(org-property-value ((t (:height 0.9 :family "Helvetica Neue"))) t)
+;; '(org-special-keyword ((t (:inherit font-lock-keyword-face :height 0.8 :family "Helvetica Neue"))))
+;; '(org-table ((t (:foreground "dim gray" :height 0.9 :family "Menlo"))))
+;; '(org-tag ((t (:foreground "dark gray" :weight bold :height 0.8))))
+;; '(org-todo ((t (:foreground "#e67e22" :weight bold))))
+
+;;; AUCTeX
+;; Customary Customization, p. 1 and 16 in the manual, and http://www.emacswiki.org/emacs/AUCTeX#toc2
+(setq TeX-parse-self t); Enable parse on load.
+(setq TeX-auto-save t); Enable parse on save.
+(setq-default TeX-master nil)
+
+(setq TeX-PDF-mode t); PDF mode (rather than DVI-mode)
+
+;; LaTeX-math-mode http://www.gnu.org/s/auctex/manual/auctex/Mathematics.html
+(add-hook 'TeX-mode-hook 'LaTeX-math-mode)
+
+;;; RefTeX
+;; Turn on RefTeX for AUCTeX http://www.gnu.org/s/auctex/manual/reftex/reftex_5.html
+(add-hook 'TeX-mode-hook 'turn-on-reftex)
+
+(eval-after-load 'reftex-vars; Is this construct really needed?
+  '(progn
+     (setq reftex-cite-prompt-optional-args t); Prompt for empty optional arguments in cite macros.
+     ;; Make RefTeX interact with AUCTeX, http://www.gnu.org/s/auctex/manual/reftex/AUCTeX_002dRefTeX-Interface.html
+     (setq reftex-plug-into-AUCTeX t)
+     ;; So that RefTeX also recognizes \addbibresource. Note that you
+     ;; can't use $HOME in path for \addbibresource but that "~"
+     ;; works.
+     (setq reftex-bibliography-commands '("bibliography" "nobibliography" "addbibresource"))
+;     (setq reftex-default-bibliography '("UNCOMMENT LINE AND INSERT PATH TO YOUR BIBLIOGRAPHY HERE")); So that RefTeX in Org-mode knows bibliography
+     (setcdr (assoc 'caption reftex-default-context-regexps) "\\\\\\(rot\\|sub\\)?caption\\*?[[{]"); Recognize \subcaptions, e.g. reftex-citation
+     (setq reftex-cite-format; Get ReTeX with biblatex, see http://tex.stackexchange.com/questions/31966/setting-up-reftex-with-biblatex-citation-commands/31992#31992
+           '((?t . "\\textcite[]{%l}")
+             (?a . "\\autocite[]{%l}")
+             (?c . "\\cite[]{%l}")
+             (?s . "\\smartcite[]{%l}")
+             (?f . "\\footcite[]{%l}")
+             (?n . "\\nocite{%l}")
+             (?b . "\\blockcquote[]{%l}{}")))))
+
+;; Fontification (remove unnecessary entries as you notice them) http://lists.gnu.org/archive/html/emacs-orgmode/2009-05/msg00236.html http://www.gnu.org/software/auctex/manual/auctex/Fontification-of-macros.html
+(setq font-latex-match-reference-keywords
+      '(
+        ;; biblatex
+        ("printbibliography" "[{")
+        ("addbibresource" "[{")
+        ;; Standard commands
+        ;; ("cite" "[{")
+        ("Cite" "[{")
+        ("parencite" "[{")
+        ("Parencite" "[{")
+        ("footcite" "[{")
+        ("footcitetext" "[{")
+        ;; ;; Style-specific commands
+        ("textcite" "[{")
+        ("Textcite" "[{")
+        ("smartcite" "[{")
+        ("Smartcite" "[{")
+        ("cite*" "[{")
+        ("parencite*" "[{")
+        ("supercite" "[{")
+        ; Qualified citation lists
+        ("cites" "[{")
+        ("Cites" "[{")
+        ("parencites" "[{")
+        ("Parencites" "[{")
+        ("footcites" "[{")
+        ("footcitetexts" "[{")
+        ("smartcites" "[{")
+        ("Smartcites" "[{")
+        ("textcites" "[{")
+        ("Textcites" "[{")
+        ("supercites" "[{")
+        ;; Style-independent commands
+        ("autocite" "[{")
+        ("Autocite" "[{")
+        ("autocite*" "[{")
+        ("Autocite*" "[{")
+        ("autocites" "[{")
+        ("Autocites" "[{")
+        ;; Text commands
+        ("citeauthor" "[{")
+        ("Citeauthor" "[{")
+        ("citetitle" "[{")
+        ("citetitle*" "[{")
+        ("citeyear" "[{")
+        ("citedate" "[{")
+        ("citeurl" "[{")
+        ;; Special commands
+        ("fullcite" "[{")))
+
+(setq font-latex-match-textual-keywords
+      '(
+        ;; biblatex brackets
+        ("parentext" "{")
+        ("brackettext" "{")
+        ("hybridblockquote" "[{")
+        ;; Auxiliary Commands
+        ("textelp" "{")
+        ("textelp*" "{")
+        ("textins" "{")
+        ("textins*" "{")
+        ;; supcaption
+        ("subcaption" "[{")))
+
+(setq font-latex-match-variable-keywords
+      '(
+        ;; amsmath
+        ("numberwithin" "{")
+        ;; enumitem
+        ("setlist" "[{")
+        ("setlist*" "[{")
+        ("newlist" "{")
+        ("renewlist" "{")
+        ("setlistdepth" "{")
+        ("restartlist" "{")))
+
+
