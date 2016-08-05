@@ -118,7 +118,7 @@ Return a list of installed packages or nil for every skipped package."
       ";" 'org-timer-set-timer
       "I" 'helm-org-task-file-headings
       "i" 'org-agenda-clock-in-avy
-      "O" 'org-agenda-clock-out-avy
+      "o" 'org-agenda-clock-out-avy
       "u" 'org-agenda-bulk-unmark
       "x" 'org-agenda-exit
       "j"  'org-agenda-next-line
@@ -130,7 +130,6 @@ Return a list of installed packages or nil for every skipped package."
       "vd" 'org-agenda-day-view
       "vc" 'org-agenda-show-clocking-issues
       "g/" 'org-agenda-filter-by-tag
-      "o" 'delete-other-windows
       "gh" 'org-agenda-holiday
       "gv" 'org-agenda-view-mode-dispatch
       "f" 'org-agenda-later
@@ -179,7 +178,6 @@ Return a list of installed packages or nil for every skipped package."
   "K" 'org-shiftup
   "L" 'org-shiftright
   "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
-  "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
   "$" 'org-end-of-line
   "^" 'org-beginning-of-line
   "<" 'org-metaleft
@@ -209,19 +207,6 @@ Return a list of installed packages or nil for every skipped package."
 (find-file "~/Dropbox/org/deep.org")
 (org-agenda nil "a")
 
-;; These faces go pretty well with the flatui theme from 
-;; https://github.com/Corsair/emacs-flatui-theme
-
-; '(org-agenda-date ((t (:inherit org-agenda-structure :weight semi-bold :height 1.0))) t)
-; '(org-date ((t (:foreground "Purple" :underline t :height 1.0 ))))
-; '(org-done ((t (:foreground "gray57" :weight light))))
-; '(org-link ((t (:inherit link :weight normal))))
-; '(org-meta-line ((t (:inherit font-lock-comment-face :height 1.0))))
-; '(org-property-value ((t (:height 1.0 :family "Menlo"))) t)
-; '(org-special-keyword ((t (:inherit font-lock-keyword-face :height 1.0 :family "Menlo"))))
-; '(org-table ((t (:foreground "dim gray" :height 1.0 :family "Menlo"))))
-; '(org-tag ((t (:foreground "dark gray" :weight bold :height 1.0))))
-; '(org-todo ((t (:foreground "#e67e22" :weight bold))))
 
 ;;; AUCTeX
 ;; Customary Customization, p. 1 and 16 in the manual, and http://www.emacswiki.org/emacs/AUCTeX#toc2
