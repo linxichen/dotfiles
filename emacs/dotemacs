@@ -41,6 +41,7 @@ Return a list of installed packages or nil for every skipped package."
                           'flatui-theme
                           'airline-themes
                           'org-bullets
+                          'zenburn-theme
                           )
 
 ;; disable splash scren
@@ -51,12 +52,12 @@ Return a list of installed packages or nil for every skipped package."
 
 ;; org-mode facelift
 (require 'org-bullets)
-(setq org-bullets-bullet-list '("◉" "◎" "⚫" "○" "►" "◇"))
+(setq org-bullets-bullet-list '("◉" "◎" "○" "►" "◇"))
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 (setq line-spacing '0.25)
-(add-hook 'org-mode-hook (lambda () (variable-pitch-mode t)))
 
 ;; Evil model related
+(setq evil-want-C-i-jump nil)
 (require 'evil-leader)
 (global-evil-leader-mode)
 (require 'evil-org)
@@ -67,13 +68,29 @@ Return a list of installed packages or nil for every skipped package."
 (exec-path-from-shell-initialize)
 
 ;; set font size
-; (set-face-attribute 'default (selected-frame) :height 150)
+; (set-face-attribute 'default (selected-frame) :height 170)
 
 ;; smart mode line
 ;; (sml/setup)
 
 ;; load-theme first
-(load-theme 'tsdh-light t)
+ (load-theme 'zenburn t)
+
+
+
+;; initial window sizes
+(setq initial-frame-alist
+      '(
+        (width . 152) ; character
+        (height . 54) ; lines
+        ))
+
+;; default/sebsequent window sizes
+(setq default-frame-alist
+      '(
+        (width . 150) ; character
+        (height . 52) ; lines
+        ))
 
 ;; powerline setup
 (require 'powerline)
@@ -81,6 +98,9 @@ Return a list of installed packages or nil for every skipped package."
 (setq ns-use-srgb-colorspace nil) ;; this fixes weird arrow
 (require 'airline-themes)
 (load-theme 'airline-light t)
+
+;; set up font size
+(set-face-attribute 'default nil :height 170)
 
 ;; evil takes over calendar
 (evil-set-initial-state 'calendar-mode 'normal)
@@ -91,6 +111,8 @@ Return a list of installed packages or nil for every skipped package."
 (global-evil-surround-mode 1)
 
 ;; org-mode customization
+(setq org-track-ordered-property-with-tag t)
+(setq org-enforce-todo-dependency t)
 (setq org-agenda-files '("~/Dropbox/org"))
 (setq org-agenda-start-on-weekday nil)
 (setq org-log-done t)
@@ -118,7 +140,7 @@ Return a list of installed packages or nil for every skipped package."
       ";" 'org-timer-set-timer
       "I" 'helm-org-task-file-headings
       "i" 'org-agenda-clock-in-avy
-      "o" 'org-agenda-clock-out-avy
+      "O" 'org-agenda-clock-out-avy
       "u" 'org-agenda-bulk-unmark
       "x" 'org-agenda-exit
       "j"  'org-agenda-next-line
@@ -130,6 +152,7 @@ Return a list of installed packages or nil for every skipped package."
       "vd" 'org-agenda-day-view
       "vc" 'org-agenda-show-clocking-issues
       "g/" 'org-agenda-filter-by-tag
+      "o" 'delete-other-windows
       "gh" 'org-agenda-holiday
       "gv" 'org-agenda-view-mode-dispatch
       "f" 'org-agenda-later
@@ -178,6 +201,7 @@ Return a list of installed packages or nil for every skipped package."
   "K" 'org-shiftup
   "L" 'org-shiftright
   "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
+  "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
   "$" 'org-end-of-line
   "^" 'org-beginning-of-line
   "<" 'org-metaleft
@@ -200,13 +224,26 @@ Return a list of installed packages or nil for every skipped package."
 
 ;; kinda force agenda to show vertically
 (defadvice org-agenda (around split-vertically activate)
-  (let ((split-width-threshold 90))
+  (let ((split-width-threshold 30))
     ad-do-it))
 
 ;; open agenda when start up
 (find-file "~/Dropbox/org/deep.org")
 (org-agenda nil "a")
 
+;; These faces go pretty well with the flatui theme from 
+;; https://github.com/Corsair/emacs-flatui-theme
+
+; '(org-agenda-date ((t (:inherit org-agenda-structure :weight semi-bold :height 1.0))) t)
+; '(org-date ((t (:foreground "Purple" :underline t :height 1.0 ))))
+; '(org-done ((t (:foreground "gray57" :weight light))))
+; '(org-link ((t (:inherit link :weight normal))))
+; '(org-meta-line ((t (:inherit font-lock-comment-face :height 1.0))))
+; '(org-property-value ((t (:height 1.0 :family "Menlo"))) t)
+; '(org-special-keyword ((t (:inherit font-lock-keyword-face :height 1.0 :family "Menlo"))))
+; '(org-table ((t (:foreground "dim gray" :height 1.0 :family "Menlo"))))
+; '(org-tag ((t (:foreground "dark gray" :weight bold :height 1.0))))
+; '(org-todo ((t (:foreground "#e67e22" :weight bold))))
 
 ;;; AUCTeX
 ;; Customary Customization, p. 1 and 16 in the manual, and http://www.emacswiki.org/emacs/AUCTeX#toc2
@@ -319,17 +356,3 @@ Return a list of installed packages or nil for every skipped package."
         ("renewlist" "{")
         ("setlistdepth" "{")
         ("restartlist" "{")))
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
