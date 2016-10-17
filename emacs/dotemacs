@@ -276,9 +276,7 @@ Return a list of installed packages or nil for every skipped package."
 (setq reftex-cite-cleanup-optional-args t)
 
 
-(setq org-link-abbrev-alist
-      '(("papers" . "~/Dropbox/#papers/%s.pdf")))
+(setq org-latex-pdf-process '("texi2dvi -p -b -V %f"))
+(define-key org-mode-map (kbd "C-c [") 'org-reftex-citation)
 
-; (setq org-latex-pdf-process '("texi2dvi -p -b -V %f"))
-; (define-key org-mode-map (kbd "C-c [") 'org-reftex-citation)
-
+(require 'ox-bibtex)
