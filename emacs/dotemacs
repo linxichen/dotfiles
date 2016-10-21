@@ -31,6 +31,7 @@ Return a list of installed packages or nil for every skipped package."
 (ensure-package-installed 'org
                           'org-plus-contrib
                           'evil
+                          'ess
                           'evil-leader
                           'evil-surround
                           'evil-org
@@ -75,7 +76,11 @@ Return a list of installed packages or nil for every skipped package."
 ;; load-theme first
  (load-theme 'zenburn t)
 
-
+;; requires ESS
+(require 'ess)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((stata . t)))
 
 ;; initial window sizes
 (setq initial-frame-alist
