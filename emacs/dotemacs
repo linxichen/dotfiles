@@ -77,7 +77,7 @@ Return a list of installed packages or nil for every skipped package."
  (load-theme 'zenburn t)
 
 ;; requires ESS
-(require 'ess)
+(require 'ess-site)
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((stata . t)))
