@@ -31,6 +31,8 @@ Return a list of installed packages or nil for every skipped package."
 (ensure-package-installed 'org
                           'org-plus-contrib
                           'evil
+                          'matlab-mode
+                          'column-marker
                           'ess
                           'evil-leader
                           'evil-surround
@@ -46,6 +48,17 @@ Return a list of installed packages or nil for every skipped package."
                           'org-bullets
                           'zenburn-theme
                           )
+
+;; enable recent file
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-menu-items 25)
+(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+
+;; enable 80 char line
+(require 'column-marker)
+(add-hook 'foo-mode-hook (lambda () (interactive) (column-marker-1 80)))
+
 
 ;; disable splash scren
 (setq inhibit-startup-screen t)
@@ -80,7 +93,11 @@ Return a list of installed packages or nil for every skipped package."
 (require 'ess-site)
 (org-babel-do-load-languages
  'org-babel-load-languages
- '((stata . t)))
+ '( (stata . t) (matlab . t) (octave . t)  ))
+
+;; add matlab path to exec path
+; (setq exec-path (append exec-path '("/Application/MATLAB2016.app/bin")))
+; (setenv "PATH" (concat (getenv "PATH") "/Application/MATLAB2016.app/bin" ))
 
 ;; initial window sizes
 (setq initial-frame-alist
