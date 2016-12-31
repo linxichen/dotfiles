@@ -69,7 +69,7 @@ set number                           " show line number
 set tabstop=4                        " set tab to be 4 columns wide
 set softtabstop=4                    " # of columns when hit tab
 set shiftwidth=4                     " # of columns indent is (== >> <<)
-set cursorline                       " show underline of cursor
+" set cursorline                       " show underline of cursor
 set autoindent                       " always set autoindenting on
 set showmatch                        " To show briefly the matching bracket.
 set backspace=indent,eol,start       " backspacing over everything
@@ -86,8 +86,8 @@ set list                             " showing hidden characters tab
 set listchars=tab:▸\                 " nice little arrow to show tab
 let base16colorspace=256             " colors present in 256 colorspace
 set t_Co=256                         " set terminal to have 256 colors
-set background=dark                 " stuff
-colorscheme zenburn                  " use the scheme base16-ocean
+set background=light                 " stuff
+colorscheme base16-ocean                  " use the scheme base16-ocean
 set autoread                         " detect file change
 set clipboard=unnamed                " merge vim and system clipboard
 set completeopt+=longest             " show the longest common word first
