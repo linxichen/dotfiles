@@ -68,9 +68,9 @@ filetype plugin indent on    " required
 " See http://tedlogan.com/techblog3.html for an explaination of tabs in vim
 set noexpandtab                      " don't use space to replace tab
 set number                           " show line number
-set tabstop=4                        " set tab to be 4 columns wide
-set softtabstop=4                    " # of columns when hit tab
-set shiftwidth=4                     " # of columns indent is (== >> <<)
+set tabstop=2                        " set tab to be 4 columns wide
+set softtabstop=2                    " # of columns when hit tab
+set shiftwidth=2                     " # of columns indent is (== >> <<)
 set cursorline                       " show underline of cursor
 set autoindent                       " always set autoindenting on
 set showmatch                        " To show briefly the matching bracket.
