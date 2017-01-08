@@ -39,6 +39,8 @@ Plugin 'tpope/vim-surround'      " powerful surround plugin
 Plugin 'tpope/vim-speeddating'   " C-a and C-x to change time
 Plugin 'jceb/vim-orgmode'
 Plugin 'jnurmine/Zenburn'
+Plugin 'yuratomo/w3m.vim'        " put w3m browser inside vim
+
 
 " Inactive plugins that you'd try later on
 " Plugin 'ervandew/screen' " required by VimLab to manage MATLAB session
@@ -96,6 +98,7 @@ autocmd FileType plaintex,tex,latex set textwidth=120
 set colorcolumn=+1                   " vertical bar at tw+1 column
 set omnifunc=syntaxcomplete#Complete " enables omni complete
 set backupdir=~/.vim//             " set  backupdir to avoid ~ after ext
+set iskeyword-=_                    " set underscore as word boundary
 autocmd BufRead,BufNewFile *.mod set filetype=dynare "try to know dynare
 
 " Inactive settings, might play with later
