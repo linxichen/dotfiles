@@ -87,7 +87,7 @@ set listchars=tab:▸\                 " nice little arrow to show tab
 let base16colorspace=256             " colors present in 256 colorspace
 set t_Co=256                         " set terminal to have 256 colors
 set background=light                 " stuff
-colorscheme base16-ocean                  " use the scheme base16-ocean
+colorscheme zenburn                  " use the scheme base16-ocean
 set autoread                         " detect file change
 set clipboard=unnamed                " merge vim and system clipboard
 set completeopt+=longest             " show the longest common word first
@@ -118,6 +118,32 @@ let g:airline_powerline_fonts = 1
 let g:airline#extensions#whitespace#mixed_indent_algo = 2
 let g:airline#extensions#whitespace#checks = [ 'indent', 'trailing']
 let g:airline#extensions#whitespace#checks += ['long']
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+
+" unicode symbols
+let g:airline_left_sep = ''
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_sep = ''
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.paste = 'Þ'
+let g:airline_symbols.paste = '∥'
+let g:airline_symbols.whitespace = 'Ξ'
+
+" airline symbols
+" let g:airline_left_sep = ''
+" let g:airline_left_alt_sep = ''
+" let g:airline_right_sep = ''
+" let g:airline_right_alt_sep = ''
+" let g:airline_symbols.branch = ''
+" let g:airline_symbols.readonly = ''
+" let g:airline_symbols.linenr = ''
 
 "------------------------------------------------------------------------
 " syntastic settings
