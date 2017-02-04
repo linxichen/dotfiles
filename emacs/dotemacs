@@ -304,3 +304,4 @@ Return a list of installed packages or nil for every skipped package."
 (define-key org-mode-map (kbd "C-c [") 'org-reftex-citation)
 
 (require 'ox-bibtex)
+(require 'ox-beamer)
