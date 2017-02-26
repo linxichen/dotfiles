@@ -41,7 +41,7 @@ Plugin 'jceb/vim-orgmode'
 Plugin 'jnurmine/Zenburn'
 Plugin 'yuratomo/w3m.vim'        " put w3m browser inside vim
 Plugin 'vimwiki/vimwiki'
-
+Plugin 'takac/vim-hardtime'     " allows for hardmode
 
 " Inactive plugins that you'd try later on
 " Plugin 'ervandew/screen' " required by VimLab to manage MATLAB session
@@ -105,9 +105,9 @@ set iskeyword-=_                    " set underscore as word boundary
 autocmd BufRead,BufNewFile *.mod set filetype=dynare "try to know dynare
 
 " Inactive settings, might play with later
-" set relativenumber                  " show relative line number
+set relativenumber                  " show relative line number
 " set formatoptions+=t             " auto-wrap text excl. comments
-" set ttyfast                      " faster redrawing?
+set ttyfast                      " faster redrawing?
 
 "------------------------------------------------------------------------
 " vim-commentary settings
@@ -272,3 +272,16 @@ let g:airline#extensions#tmuxline#enabled = 1
 "------------------------------------------------------------------------
 let g:vimwiki_list = [{'path': '~/my_site/',
                        \ 'syntax': 'markdown', 'ext': '.md'}]
+
+
+"------------------------------------------------------------------------
+" vim hardmode setup
+"------------------------------------------------------------------------
+autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
+
+
+
+"------------------------------------------------------------------------
+" vim hardmode setup
+"------------------------------------------------------------------------
+let g:hardtime_default_on = 1
