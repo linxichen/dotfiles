@@ -105,7 +105,7 @@ set iskeyword-=_                    " set underscore as word boundary
 autocmd BufRead,BufNewFile *.mod set filetype=dynare "try to know dynare
 
 " Inactive settings, might play with later
-set relativenumber                  " show relative line number
+" set relativenumber                  " show relative line number
 " set formatoptions+=t             " auto-wrap text excl. comments
 set ttyfast                      " faster redrawing?
 
