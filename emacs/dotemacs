@@ -7,6 +7,8 @@
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize) ;; You might already have this line
 
+; Tested-by: Linxi Chen <empirechen88@gmail.com>
+
 ;; auto install packges
 (defun ensure-package-installed (&rest packages)
   "Assure every package is installed, ask for installation if it’s not.
@@ -44,6 +46,7 @@ Return a list of installed packages or nil for every skipped package."
                           'powerline
                           'powerline-evil
                           'auctex
+                          'cdlatex
                           'flatui-theme
                           'airline-themes
                           'org-bullets
@@ -76,6 +79,9 @@ Return a list of installed packages or nil for every skipped package."
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 (setq line-spacing '0.25)
 
+;; CDLaTex
+(add-hook 'org-mode-hook 'turn-on-org-cdlatex)
+
 ;; Evil model related
 (setq evil-want-C-i-jump nil)
 (require 'evil-leader)
@@ -91,7 +97,7 @@ Return a list of installed packages or nil for every skipped package."
 ;; (sml/setup)
 
 ;; load-theme first
- (load-theme 'zenburn t)
+ (load-theme 'flatui t)
 
 ;; requires ESS
 (require 'ess-site)
@@ -276,7 +282,7 @@ Return a list of installed packages or nil for every skipped package."
   '("~/Dropbox/#papers/everything.bib"))
 
 (setq reftex-bibpath-environment-variables
-  '("~/Dropbox/#papers"))
+  '("~/Dropbox/papers"))
 
 (setq reftex-bibpath-environment-variables
 '("~/Library/texmf/bibtex/bib"))
@@ -303,8 +309,14 @@ Return a list of installed packages or nil for every skipped package."
 (setq reftex-cite-prompt-optional-args nil)
 (setq reftex-cite-cleanup-optional-args t)
 
-(setq org-latex-pdf-process '("texi2dvi -p -b -V %f"))
+; (setq org-latex-pdf-process '("texi2dvi -p -b -V %f"))
+(setq org-latex-pdf-process (quote ("texi2dvi --pdf --clean --verbose
+--batch %f" "bibtex %b" "texi2dvi --pdf --clean --verbose --batch %f"
+"texi2dvi --pdf --clean --verbose --batch %f")))
 (define-key org-mode-map (kbd "C-c [") 'org-reftex-citation)
 
 (require 'ox-bibtex)
 (require 'ox-beamer)
+
+;; Magit set up
+(require 'magit)
