@@ -62,10 +62,10 @@ Return a list of installed packages or nil for every skipped package."
 
 ;; enable 80 char line
 (require 'column-marker)
-(add-hook 'foo-mode-hook (lambda () (interactive) (column-marker-1 80)))
+(add-hook 'org-mode-hook (lambda () (interactive) (column-marker-1 80)))
 
 ;; enable absolute line number
-(global-linum-mode t)
+; (global-linum-mode t)
 
 ;; disable splash scren
 (setq inhibit-startup-screen t)
@@ -97,7 +97,7 @@ Return a list of installed packages or nil for every skipped package."
 ;; (sml/setup)
 
 ;; load-theme first
- (load-theme 'flatui t)
+(load-theme 'solarized-light t)
 
 ;; requires ESS
 (require 'ess-site)
@@ -106,8 +106,10 @@ Return a list of installed packages or nil for every skipped package."
  '( (stata . t) (matlab . t) (octave . t)  ))
 
 ;; add matlab path to exec path
-; (setq exec-path (append exec-path '("/Application/MATLAB2016.app/bin")))
-; (setenv "PATH" (concat (getenv "PATH") "/Application/MATLAB2016.app/bin" ))
+(setq exec-path (append exec-path '("/Applications/MATLAB2016b.app/bin")))
+(setenv "PATH" (concat (getenv "PATH") "/Applications/MATLAB2016b.app/bin" ))
+(setq matlab-shell-command "/Applications/MATLAB_R2016b.app/bin/matlab")
+; (setq matlab-shell-command-switches (list " -nojvm -nodesktop -nodisplay -noFigureWindows -nosplash"))
 
 ;; initial window sizes
 (setq initial-frame-alist
@@ -259,9 +261,9 @@ Return a list of installed packages or nil for every skipped package."
     ad-do-it))
 
 ;; open agenda when start up
-(find-file "~/Dropbox/org/dump.org")
-(find-file "~/Dropbox/org/jmp.org")
-(org-agenda nil "a")
+; (find-file "~/Dropbox/org/dump.org")
+(find-file "~/Dropbox/org/work.org")
+(org-agenda nil "t")
 
 ;; make org-mode latex preview bigger
 (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
@@ -320,3 +322,25 @@ Return a list of installed packages or nil for every skipped package."
 
 ;; Magit set up
 (require 'magit)
+
+;; pdf-tools
+; (pdf-tools-install)
+
+;; add papers folder
+(add-to-list 'load-path (expand-file-name "~/Dropbox/papers"))
+
+;; improvements of evil mode
+(setq evil-want-fine-undo t)
+
+;; esc quits
+(define-key evil-normal-state-map [escape] 'keyboard-quit)
+(define-key evil-visual-state-map [escape] 'keyboard-quit)
+(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+
+(evil-set-initial-state 'eww-mode 'normal) ;; enter insert mode to edit a commit message
+; (evil-set-initial-state 'pdf-view-mode 'normal) ;; enter insert mode to edit a commit message
+; (evil-set-initial-state 'doc-view-mode 'normal) ;; enter insert mode to edit a commit message
