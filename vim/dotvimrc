@@ -97,7 +97,7 @@ set autoread                         " detect file change
 set clipboard=unnamed                " merge vim and system clipboard
 set completeopt+=longest             " show the longest common word first
 set textwidth=80                     " good old 72 char limit
-autocmd FileType plaintex,tex,latex set textwidth=120
+autocmd FileType plaintex,tex,latex set textwidth=120 " allow 120 width for tex
 set colorcolumn=+1                   " vertical bar at tw+1 column
 set omnifunc=syntaxcomplete#Complete " enables omni complete
 set backupdir=~/.vim//             " set  backupdir to avoid ~ after ext
@@ -105,7 +105,7 @@ set iskeyword-=_                    " set underscore as word boundary
 autocmd BufRead,BufNewFile *.mod set filetype=dynare "try to know dynare
 
 " Inactive settings, might play with later
-set relativenumber                  " show relative line number
+" set relativenumber                  " show relative line number
 " set formatoptions+=t             " auto-wrap text excl. comments
 set ttyfast                      " faster redrawing?
 
@@ -273,7 +273,6 @@ let g:airline#extensions#tmuxline#enabled = 1
 let g:vimwiki_list = [{'path': '~/my_site/',
                        \ 'syntax': 'markdown', 'ext': '.md'}]
 
-
 "------------------------------------------------------------------------
 " vim hardmode setup
 "------------------------------------------------------------------------
@@ -283,3 +282,5 @@ autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
 " vim hardmode setup
 "------------------------------------------------------------------------
 let g:hardtime_default_on = 1
+let g:hardtime_maxcount = 1
+let g:hardtime_timeout = 4000

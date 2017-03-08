@@ -7,6 +7,8 @@
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize) ;; You might already have this line
 
+; Tested-by: Linxi Chen <empirechen88@gmail.com>
+
 ;; auto install packges
 (defun ensure-package-installed (&rest packages)
   "Assure every package is installed, ask for installation if it’s not.
@@ -34,6 +36,7 @@ Return a list of installed packages or nil for every skipped package."
                           'matlab-mode
                           'column-marker
                           'ess
+                          'evil-magit
                           'evil-leader
                           'evil-surround
                           'evil-org
@@ -43,10 +46,12 @@ Return a list of installed packages or nil for every skipped package."
                           'powerline
                           'powerline-evil
                           'auctex
+                          'cdlatex
                           'flatui-theme
                           'airline-themes
                           'org-bullets
                           'zenburn-theme
+                          'magit
                           )
 
 ;; enable recent file
@@ -59,6 +64,8 @@ Return a list of installed packages or nil for every skipped package."
 (require 'column-marker)
 (add-hook 'foo-mode-hook (lambda () (interactive) (column-marker-1 80)))
 
+;; enable absolute line number
+(global-linum-mode t)
 
 ;; disable splash scren
 (setq inhibit-startup-screen t)
@@ -67,10 +74,13 @@ Return a list of installed packages or nil for every skipped package."
 (global-visual-line-mode 1)
 
 ;; org-mode facelift
-(require 'org-bullets)
-(setq org-bullets-bullet-list '("◉" "◎" "○" "►" "◇"))
+; (setq org-bullets-bullet-list '("◉" "◎" "○" "►" "◇"))
+(setq org-bullets-bullet-list '(" " " " " " " " " "))
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 (setq line-spacing '0.25)
+
+;; CDLaTex
+(add-hook 'org-mode-hook 'turn-on-org-cdlatex)
 
 ;; Evil model related
 (setq evil-want-C-i-jump nil)
@@ -87,7 +97,7 @@ Return a list of installed packages or nil for every skipped package."
 ;; (sml/setup)
 
 ;; load-theme first
- (load-theme 'zenburn t)
+ (load-theme 'flatui t)
 
 ;; requires ESS
 (require 'ess-site)
@@ -215,14 +225,14 @@ Return a list of installed packages or nil for every skipped package."
 	   'org-backward-same-level
 	  'org-backward-heading-same-level)
   "gl" 'outline-next-visible-heading
-  "t" 'org-todo
-  "T" '(lambda () (interactive) (evil-org-eol-call (lambda() (org-insert-todo-heading nil))))
+  "T" 'org-todo
+  ; "T" '(lambda () (interactive) (evil-org-eol-call (lambda() (org-insert-todo-heading nil))))
   "H" 'org-shiftleft
   "J" 'org-shiftdown
   "K" 'org-shiftup
   "L" 'org-shiftright
   "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
-  "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
+  ;; "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
   "$" 'org-end-of-line
   "^" 'org-beginning-of-line
   "<" 'org-metaleft
@@ -272,7 +282,7 @@ Return a list of installed packages or nil for every skipped package."
   '("~/Dropbox/#papers/everything.bib"))
 
 (setq reftex-bibpath-environment-variables
-  '("~/Dropbox/#papers"))
+  '("~/Dropbox/papers"))
 
 (setq reftex-bibpath-environment-variables
 '("~/Library/texmf/bibtex/bib"))
@@ -299,8 +309,14 @@ Return a list of installed packages or nil for every skipped package."
 (setq reftex-cite-prompt-optional-args nil)
 (setq reftex-cite-cleanup-optional-args t)
 
-
-(setq org-latex-pdf-process '("texi2dvi -p -b -V %f"))
+; (setq org-latex-pdf-process '("texi2dvi -p -b -V %f"))
+(setq org-latex-pdf-process (quote ("texi2dvi --pdf --clean --verbose
+--batch %f" "bibtex %b" "texi2dvi --pdf --clean --verbose --batch %f"
+"texi2dvi --pdf --clean --verbose --batch %f")))
 (define-key org-mode-map (kbd "C-c [") 'org-reftex-citation)
 
 (require 'ox-bibtex)
+(require 'ox-beamer)
+
+;; Magit set up
+(require 'magit)

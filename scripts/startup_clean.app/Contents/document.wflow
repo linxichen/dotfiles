@@ -173,7 +173,7 @@ sleep $minutes</string>
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>309.000000:253.000000</string>
+				<string>529.000000:253.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/English.lproj/main.nib</string>
 			</dict>
@@ -343,9 +343,113 @@ sleep $minutes</string>
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>309.000000:436.000000</string>
+				<string>529.000000:436.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/English.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>AMActionVersion</key>
+				<string>1.0.2</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>source</key>
+					<dict/>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run AppleScript.action</string>
+				<key>ActionName</key>
+				<string>Run AppleScript</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>source</key>
+					<string>on run {input, parameters}		if parameters is "false" then		set toggleOnFull to true	else		set toggleOnFull to false	end if		tell application "iTerm"		activate		delay 2		set isfullscreen to false		tell application "System Events" to tell process "iTerm2"			set isfullscreen to value of attribute "AXFullScreen" of window 1		end tell		--display dialog "var " &amp; isfullscreen	end tell			if isfullscreen is toggleOnFull then		tell application "System Events" to key code 36 using {command down}		delay 2	end if		return inputend run</string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.Automator.RunScript</string>
+				<key>CFBundleVersion</key>
+				<string>1.0.2</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>RunScriptAction</string>
+				<key>InputUUID</key>
+				<string>22E8F4CC-2775-4D3A-BBB0-90D87E7D3065</string>
+				<key>Keywords</key>
+				<array>
+					<string>Run</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>931BC9FE-548E-4FB9-B7B2-943FAA3CE025</string>
+				<key>UUID</key>
+				<string>2EF91AB8-3F29-4CA9-BBBD-2AA111BDEC5A</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<string>on run {input, parameters}
+	
+	(* Your script goes here *)
+	
+	return input
+end run</string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
+				<key>isViewVisible</key>
+				<true/>
+				<key>location</key>
+				<string>529.000000:682.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
 			<key>isViewVisible</key>
 			<true/>
@@ -353,12 +457,19 @@ sleep $minutes</string>
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>80F6D392-D183-45B3-8080-6B8E797881D9</key>
+		<key>363D9FF5-5755-4347-8F97-AE2D444DDDA5</key>
 		<dict>
 			<key>from</key>
 			<string>26978BB4-F0A8-4E95-AF81-BC205DDB8146 - 26978BB4-F0A8-4E95-AF81-BC205DDB8146</string>
 			<key>to</key>
 			<string>092C2CD7-CADA-42E3-ADAB-3C301F2BC286 - 092C2CD7-CADA-42E3-ADAB-3C301F2BC286</string>
+		</dict>
+		<key>FA767E91-E550-40E7-89C9-D5A4BE6D0BF5</key>
+		<dict>
+			<key>from</key>
+			<string>092C2CD7-CADA-42E3-ADAB-3C301F2BC286 - 092C2CD7-CADA-42E3-ADAB-3C301F2BC286</string>
+			<key>to</key>
+			<string>2EF91AB8-3F29-4CA9-BBBD-2AA111BDEC5A - 2EF91AB8-3F29-4CA9-BBBD-2AA111BDEC5A</string>
 		</dict>
 	</dict>
 	<key>variables</key>
