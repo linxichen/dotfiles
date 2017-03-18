@@ -74,9 +74,9 @@ Return a list of installed packages or nil for every skipped package."
 (global-visual-line-mode 1)
 
 ;; org-mode facelift
-; (setq org-bullets-bullet-list '("◉" "◎" "○" "►" "◇"))
-(setq org-bullets-bullet-list '(" " " " " " " " " "))
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+(setq org-bullets-bullet-list '("◉" "◎" "○" "►" "◇"))
+; (setq org-bullets-bullet-list '(" " " " " " " " " "))
+; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 (setq line-spacing '0.25)
 
 ;; CDLaTex
@@ -97,7 +97,7 @@ Return a list of installed packages or nil for every skipped package."
 ;; (sml/setup)
 
 ;; load-theme first
-(load-theme 'solarized-light t)
+(load-theme 'zenburn t)
 
 ;; requires ESS
 (require 'ess-site)
@@ -106,10 +106,10 @@ Return a list of installed packages or nil for every skipped package."
  '( (stata . t) (matlab . t) (octave . t)  ))
 
 ;; add matlab path to exec path
-(setq exec-path (append exec-path '("/Applications/MATLAB2016b.app/bin")))
-(setenv "PATH" (concat (getenv "PATH") "/Applications/MATLAB2016b.app/bin" ))
-(setq matlab-shell-command "/Applications/MATLAB_R2016b.app/bin/matlab")
-; (setq matlab-shell-command-switches (list " -nojvm -nodesktop -nodisplay -noFigureWindows -nosplash"))
+(setq exec-path (append exec-path '("/Applications/MATLAB2017a.app/bin")))
+(setenv "PATH" (concat (getenv "PATH") "/Applications/MATLAB2017a.app/bin" ))
+(setq matlab-shell-command "/Applications/MATLAB_R2017a.app/bin/matlab")
+(setq matlab-shell-command-switches (list "-nodesktop -nodisplay"))
 
 ;; initial window sizes
 (setq initial-frame-alist
@@ -281,7 +281,7 @@ Return a list of installed packages or nil for every skipped package."
 
 ;; Copy from Clark Donley's blog
 (setq reftex-default-bibliography
-  '("~/Dropbox/#papers/everything.bib"))
+  '("~/Dropbox/papers/everything.bib"))
 
 (setq reftex-bibpath-environment-variables
   '("~/Dropbox/papers"))
@@ -312,9 +312,9 @@ Return a list of installed packages or nil for every skipped package."
 (setq reftex-cite-cleanup-optional-args t)
 
 ; (setq org-latex-pdf-process '("texi2dvi -p -b -V %f"))
-(setq org-latex-pdf-process (quote ("texi2dvi --pdf --clean --verbose
---batch %f" "bibtex %b" "texi2dvi --pdf --clean --verbose --batch %f"
-"texi2dvi --pdf --clean --verbose --batch %f")))
+; (setq org-latex-pdf-process (quote ("texi2dvi --pdf --clean --verbose
+; --batch %f" "bibtex %b" "texi2dvi --pdf --clean --verbose --batch %f"
+; "texi2dvi --pdf --clean --verbose --batch %f")))
 (define-key org-mode-map (kbd "C-c [") 'org-reftex-citation)
 
 (require 'ox-bibtex)
@@ -324,7 +324,7 @@ Return a list of installed packages or nil for every skipped package."
 (require 'magit)
 
 ;; pdf-tools
-; (pdf-tools-install)
+(pdf-tools-install)
 
 ;; add papers folder
 (add-to-list 'load-path (expand-file-name "~/Dropbox/papers"))
@@ -344,3 +344,11 @@ Return a list of installed packages or nil for every skipped package."
 (evil-set-initial-state 'eww-mode 'normal) ;; enter insert mode to edit a commit message
 ; (evil-set-initial-state 'pdf-view-mode 'normal) ;; enter insert mode to edit a commit message
 ; (evil-set-initial-state 'doc-view-mode 'normal) ;; enter insert mode to edit a commit message
+
+; disable ask for evaluation everything
+(setq org-confirm-babel-evaluate nil)
+
+; use one pdflatex, one bibtex, then two pdflatex to get pdf
+(setq org-latex-pdf-process
+   (quote
+    ("pdflatex -interaction nonstopmode -output-directory %o %f" "bibtex %b" "pdflatex -interaction nonstopmode -output-directory %o %f" "pdflatex -interaction nonstopmode -output-directory %o %f")))
