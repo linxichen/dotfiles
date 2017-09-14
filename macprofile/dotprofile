@@ -1,4 +1,4 @@
-alias jmp='cd ~/Dropbox/GradSchool/Dissertation/jmp'
+alias jmp='cd ~/Dropbox/\!GradSchool/jobmarket/jmp'
 alias econserver='ssh -X lc147@login.econ.duke.edu'
 alias k40='ssh -X -Y lc147@comp-node-17.econ.duke.edu'
 alias myserver='ssh -Y linxi@lc147-01.econ.duke.edu'
