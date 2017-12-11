@@ -42,13 +42,13 @@ Plugin 'jnurmine/Zenburn'
 Plugin 'yuratomo/w3m.vim'        " put w3m browser inside vim
 Plugin 'vimwiki/vimwiki'
 Plugin 'takac/vim-hardtime'     " allows for hardmode
-Plugin 'doc/taskpaper.vim'     " allows for hardmode
 
 " Inactive plugins that you'd try later on
 " Plugin 'ervandew/screen' " required by VimLab to manage MATLAB session
 " Plugin 'dajero/VimLab' " plugin to use MATLAB inside vim
 " Plugin 'lervag/vimtex' " the light-feature latex vim plugin
 " Plugin 'Valloric/YouCompleteMe' " the powerful complettion plugin
+" Plugin 'daviddoc/taskpaper.vim'     " allows for hardmode
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
