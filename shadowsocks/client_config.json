@@ -1,0 +1,9 @@
+{
+    "server":"empirechen.colab.duke.edu",
+    "server_port":9394,
+    "local_port":1080,
+    "password":"880420",
+    "timeout":600,
+    "method":"chacha20-ietf-poly1305",
+    "fast_open":true
+}
