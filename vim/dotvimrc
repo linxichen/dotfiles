@@ -42,6 +42,7 @@ Plugin 'jnurmine/Zenburn'
 Plugin 'yuratomo/w3m.vim'        " put w3m browser inside vim
 Plugin 'vimwiki/vimwiki'
 Plugin 'takac/vim-hardtime'     " allows for hardmode
+Plugin 'rafi/awesome-vim-colorschemes' " more themes
 
 " Inactive plugins that you'd try later on
 " Plugin 'ervandew/screen' " required by VimLab to manage MATLAB session
@@ -92,7 +93,7 @@ let base16colorspace=256             " colors present in 256 colorspace
 set term=screen-256color             " set 256 color screen to match with tmux
 set t_Co=256                         " set terminal to have 256 colors
 set background=dark                 " stuff
-colorscheme zenburn         " use the scheme base16-ocean
+colorscheme github         " use the scheme base16-ocean
 let g:solarized_termcolors=256
 set autoread                         " detect file change
 set clipboard=unnamed                " merge vim and system clipboard
