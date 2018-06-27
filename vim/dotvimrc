@@ -17,34 +17,35 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 " list all plugins that you'd like to install here
-Plugin 'gmarik/Vundle.vim'       " let Vundle manage Vundle, required
-Plugin 'kien/ctrlp.vim'          " fuzzy find files
-Plugin 'scrooloose/nerdtree'     " file drawer, open with :NERDTreeToggle
-Plugin 'tpope/vim-fugitive'      " the ultimate git helper
-Plugin 'tpope/vim-commentary'    " comment/uncomment lines with gcc or gc
-Plugin 'L9'                      " plugin from http://vim-scripts.org
-Plugin 'Smart-Tabs'              " uses tab for indent but space for alignment
-Plugin 'chriskempson/base16-vim' " all color scheme of base16
-Plugin 'scrooloose/syntastic'    " pluging that checks syntax errors
-Plugin 'ntpeters/vim-better-whitespace'
-Plugin 'vim-airline/vim-airline' " plugin that gives awesome status line
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'edkolev/tmuxline.vim'    " plugin that improves tmux status line
-Plugin 'junegunn/vim-easy-align' " plugin that help you easily align
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'vim-latex/vim-latex'     " LaTex-Suite
-Plugin 'ervandew/supertab'       " used tab for complete
-Plugin 'vimoutliner/vimoutliner' " the awesome outliner
-Plugin 'tpope/vim-surround'      " powerful surround plugin
-Plugin 'tpope/vim-speeddating'   " C-a and C-x to change time
+Plugin 'gmarik/Vundle.vim'              " let Vundle manage Vundle, required
+Plugin 'kien/ctrlp.vim'                 " fuzzy find files
+Plugin 'scrooloose/nerdtree'            " file drawer, open with :NERDTreeToggle
+Plugin 'tpope/vim-fugitive'             " the ultimate git helper
+Plugin 'tpope/vim-commentary'           " comment/uncomment lines with gcc or gc
+Plugin 'L9'                             " plugin from http://vim-scripts.org
+Plugin 'Smart-Tabs'                     " uses tab for indent but space for alignment
+Plugin 'chriskempson/base16-vim'        " all color scheme of base16
+Plugin 'scrooloose/syntastic'           " pluging that checks syntax errors
+Plugin 'ntpeters/vim-better-whitespace' " as the name says
+Plugin 'vim-airline/vim-airline'        " plugin that gives awesome status line
+Plugin 'vim-airline/vim-airline-themes' " themes for vim-airline
+Plugin 'edkolev/tmuxline.vim'           " plugin that improves tmux status line
+Plugin 'junegunn/vim-easy-align'        " plugin that help you easily align
+Plugin 'vim-latex/vim-latex'            " LaTex-Suite
+Plugin 'ervandew/supertab'              " used tab for complete
+Plugin 'vimoutliner/vimoutliner'        " the awesome outliner
+Plugin 'tpope/vim-surround'             " powerful surround plugin
+Plugin 'tpope/vim-speeddating'          " C-a and C-x to change time
 Plugin 'jceb/vim-orgmode'
 Plugin 'jnurmine/Zenburn'
-Plugin 'yuratomo/w3m.vim'        " put w3m browser inside vim
-Plugin 'vimwiki/vimwiki'
-Plugin 'takac/vim-hardtime'     " allows for hardmode
-Plugin 'rafi/awesome-vim-colorschemes' " more themes
+Plugin 'yuratomo/w3m.vim'               " put w3m browser inside vim
 
 " Inactive plugins that you'd try later on
+" Plugin 'altercation/vim-colors-solarized'
+" Plugin 'takac/vim-hardtime'     " allows for hardmode
+" Plugin 'vimwiki/vimwiki'
+" Plugin 'rainglow/vim' " more themes
+" Plugin 'godlygeek/csapprox' " make colorschemes work for terminal vim
 " Plugin 'ervandew/screen' " required by VimLab to manage MATLAB session
 " Plugin 'dajero/VimLab' " plugin to use MATLAB inside vim
 " Plugin 'lervag/vimtex' " the light-feature latex vim plugin
@@ -93,7 +94,7 @@ let base16colorspace=256             " colors present in 256 colorspace
 set term=screen-256color             " set 256 color screen to match with tmux
 set t_Co=256                         " set terminal to have 256 colors
 set background=dark                 " stuff
-colorscheme github         " use the scheme base16-ocean
+colorscheme zenburn         " use the scheme base16-ocean
 let g:solarized_termcolors=256
 set autoread                         " detect file change
 set clipboard=unnamed                " merge vim and system clipboard
