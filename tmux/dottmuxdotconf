@@ -42,3 +42,22 @@ bind - split-window -v -c "#{pane_current_path}"
 
 # use vim style keys in copy paste
 set-window-option -g mode-keys vi
+
+# List of plugins
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+
+# Other examples:
+# set -g @plugin "arcticicestudio/nord-tmux"
+# set -g @plugin 'github_username/plugin_name'
+# set -g @plugin 'github_username/plugin_name#branch'
+# set -g @plugin 'git@github.com:user/plugin'
+# set -g @plugin 'git@bitbucket.com:user/plugin'
+
+
+# Add Catppuccin plugin for theme
+set -g @plugin 'catppuccin/tmux'
+set -g @catppuccin_flavour 'frappe' # latte,frappe, macchiato or mocha
+
+# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+run '~/.tmux/plugins/tpm/tpm'
