@@ -1,15 +1,20 @@
 ! regolith.look.path: /usr/share/regolith-look/blackhole
 ! gnome.terminal.font: JetBrainsMono Nerd Font Regular 11
 ! gnome.terminal.font: MesloLGS NF Regular 11
+
+! line below prevent gnome-terminal reset to default profile
 gnome.terminal.update: false
+gtk.font_name: FiraMono Nerd Font Regular 11
+gtk.monospace_font_name: FiraMono Nerd Font Regular 11
+wm.font: FiraMono Nerd Font Regular 11
 
 ! Temrinal names
-wm.workspace.01.name: 1:1>TMUX
-wm.workspace.02.name: 2:2>SEARCH
-wm.workspace.03.name: 3:3>YT
+! wm.workspace.01.name: 1:1-TMX
+! wm.workspace.02.name: 2:2-WEB
+! wm.workspace.03.name: 3:3-YT
 
 wm.gaps.inner.size: 10
 wm.gaps.outer.size: 5
 
-!regolith.look.path: /usr/share/regolith-look/ayu
+!regolith.look.path: /usr/share/regolith-look/default
 regolith.look.path: /usr/share/regolith-look/catppuccin-frappe
