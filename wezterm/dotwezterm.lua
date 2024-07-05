@@ -18,7 +18,9 @@ config.window_padding = {
 	top = 0,
 	bottom = 0,
 }
-config.front_end = "OpenGL"
+-- config.front_end = "Software"
+config.mux_enable_ssh_agent = false
+-- config.debug_key_events = true
 
 -- and finally, return the configuration to wezterm
 return config
