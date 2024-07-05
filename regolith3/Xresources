@@ -1,0 +1,15 @@
+! regolith.look.path: /usr/share/regolith-look/blackhole
+! gnome.terminal.font: JetBrainsMono Nerd Font Regular 11
+! gnome.terminal.font: MesloLGS NF Regular 11
+gnome.terminal.update: false
+
+! Temrinal names
+wm.workspace.01.name: 1:1>TMUX
+wm.workspace.02.name: 2:2>SEARCH
+wm.workspace.03.name: 3:3>YT
+
+wm.gaps.inner.size: 10
+wm.gaps.outer.size: 5
+
+!regolith.look.path: /usr/share/regolith-look/ayu
+regolith.look.path: /usr/share/regolith-look/catppuccin-frappe
