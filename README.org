@@ -1,1 +1,25 @@
 #+Title: Welcome
+
+* How to clone properly
+I included my kickstart.nvim fork as a subpackge thus it needed to be clone as well...
+#+BEGIN_SRC bash
+git clone --recurse-submodules https://github.com/linxichen/dotfiles.git
+git clone --recurse-submodules ssh://git@github.com:linxichen/dotfiles.git
+#+END_SRC
+
+* How to deploy dotfiles
+First make sure you cd to the root directory of this repo.
+
+Using `stow`, we can deploy program configs one by one:
+
+#+BEGIN_SRC bash
+stow nvim -t ~
+#+END_SRC
+
+This command will copy everything under nvim directory to ~. That is, nvim/.config will be sym linked to ~/config, etc.
+
+To delete or re-stow the package, do the following
+#+BEGIN_SRC bash
+stow nvim -D -t ~
+stow nvim -R -t ~
+#+END_SRC
