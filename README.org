@@ -10,13 +10,17 @@ git clone --recurse-submodules ssh://git@github.com:linxichen/dotfiles.git
 * How to deploy dotfiles
 First make sure you cd to the root directory of this repo.
 
-Using `stow`, we can deploy program configs one by one:
-
+Make sure deploy.sh is executable
 #+BEGIN_SRC bash
-stow nvim -t ~
+chmod +x ./deploy.sh
 #+END_SRC
 
-This command will copy everything under nvim directory to ~. That is, nvim/.config will be sym linked to ~/config, etc.
+Call deploy.sh with name of package
+#+BEGIN_SRC bash
+./deploy.sh tmux
+#+END_SRC
+
+This command initialize properly (e.g. clone tpm) and use stow to symlink everything under package directory to ~. That is, tmux/.tmux.conf will be sym linked to ~/.tmux.conf, etc.
 
 To delete or re-stow the package, do the following
 #+BEGIN_SRC bash
