@@ -4,9 +4,11 @@
 
 ! line below prevent gnome-terminal reset to default profile
 gnome.terminal.update: false
-gtk.font_name: FiraMono Nerd Font Regular 11
-gtk.monospace_font_name: FiraMono Nerd Font Regular 11
-wm.font: FiraMono Nerd Font Regular 11
+! gnome.terminal.font: FiraMono Nerd Font Regular 11
+! gtk.font_name: FiraMono Nerd Font Regular 11
+! gtk.monospace_font_name: FiraMono Nerd Font Regular 11
+! gtk.document_font_name: FiraMono Nerd Font Regular 11
+wm.bar.font: FiraMono Nerd Font Regular 11
 
 ! Temrinal names
 ! wm.workspace.01.name: 1:1-TMX
