@@ -113,23 +113,27 @@ GLFW_IM_MODULE=ibus
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('~/mambaforge/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$('/home/linxi/miniforge3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "~/mambaforge/etc/profile.d/conda.sh" ]; then
-        . "~/mambaforge/etc/profile.d/conda.sh"
+    if [ -f "/home/linxi/miniforge3/etc/profile.d/conda.sh" ]; then
+        . "/home/linxi/miniforge3/etc/profile.d/conda.sh"
     else
-        export PATH="~/mambaforge/bin:$PATH"
+        export PATH="/home/linxi/miniforge3/bin:$PATH"
     fi
 fi
 unset __conda_setup
 
-if [ -f "~/mambaforge/etc/profile.d/mamba.sh" ]; then
-    . "~/mambaforge/etc/profile.d/mamba.sh"
+if [ -f "/home/linxi/miniforge3/etc/profile.d/mamba.sh" ]; then
+    . "/home/linxi/miniforge3/etc/profile.d/mamba.sh"
 fi
 # <<< conda initialize <<<
 
 # Preprend ghcup env
 [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
-echo "Done ghcup init"
+
+export OPENAI_API_KEY="sk-e8be341407c049d4ac2c444616570197"
+export OPENAI_API_BASE="https://api.deepseek.com"
+# export OPENAI_API_TYPE="azure"
+# export OPENAI_API_AZURE_ENGINE="chat"

@@ -18,7 +18,7 @@ config.window_padding = {
 	top = 0,
 	bottom = 0,
 }
--- config.front_end = "Software"
+config.front_end = "Software"
 config.mux_enable_ssh_agent = false
 -- config.debug_key_events = true
 
