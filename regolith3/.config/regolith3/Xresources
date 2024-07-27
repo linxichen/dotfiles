@@ -17,8 +17,8 @@ wm.bar.font: RobotoMono Nerd Font Regular 11
 ! wm.workspace.02.name: 2:2-WEB
 ! wm.workspace.03.name: 3:3-YT
 
-wm.gaps.inner.size: 5
-wm.gaps.outer.size: 5
+wm.gaps.inner.size: 8
+wm.gaps.outer.size: 8
 
 
 !regolith.look.path: /usr/share/regolith-look/ayu
