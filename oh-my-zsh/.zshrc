@@ -133,7 +133,10 @@ fi
 # Preprend ghcup env
 [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
 
+# keys
 export OPENAI_API_KEY="sk-e8be341407c049d4ac2c444616570197"
 export OPENAI_API_BASE="https://api.deepseek.com"
 # export OPENAI_API_TYPE="azure"
 # export OPENAI_API_AZURE_ENGINE="chat"
+export AWS_ACCESS_KEY_ID=3oKbnnJVn5DoEMYS
+export AWS_SECRET_ACCESS_KEY=NB6ui64uM7lvTMML
