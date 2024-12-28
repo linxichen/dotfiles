@@ -59,6 +59,12 @@ case "$1" in
   # Stow tmux configuration
   stow tmux -t "$HOME_DIR"
   echo -e "${GREEN}tmux configuration deployed successfully${NC}"
+  
+  # Source tmux config and install plugins
+  echo -e "${YELLOW}Installing tmux plugins...${NC}"
+  tmux source ~/.tmux.conf
+  ~/.tmux/plugins/tpm/bin/install_plugins
+  echo -e "${GREEN}tmux plugins installed successfully${NC}"
   ;;
 
 "oh-my-zsh")
