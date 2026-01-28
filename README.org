@@ -1,5 +1,26 @@
 #+Title: Welcome
 
+* Quick Start (Interactive Installation)
+
+The easiest way to get started is using the interactive deployment script. It will guide you through selecting which packages to install and handle all dependencies automatically.
+
+#+BEGIN_SRC bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/linxichen/dotfiles/master/interactive-deploy.sh)"
+#+END_SRC
+
+Or after cloning the repository:
+
+#+BEGIN_SRC bash
+./interactive-deploy.sh
+#+END_SRC
+
+The interactive script supports:
+- Ubuntu/Debian Linux
+- Arch Linux
+- macOS (with Homebrew)
+
+It will automatically install system packages, language servers, clone external repositories (TPM, oh-my-zsh, etc.), and deploy configurations using GNU Stow.
+
 * How to clone properly
 I included my kickstart.nvim fork as a subpackge thus it needed to be clone as well...
 #+BEGIN_SRC bash
@@ -7,7 +28,8 @@ git clone --recurse-submodules https://github.com/linxichen/dotfiles.git
 git clone --recurse-submodules ssh://git@github.com:linxichen/dotfiles.git
 #+END_SRC
 
-* How to deploy dotfiles
+* How to deploy dotfiles (Manual Method)
+
 First make sure you cd to the root directory of this repo.
 
 Make sure deploy.sh is executable
