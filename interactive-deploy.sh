@@ -2,6 +2,11 @@
 # Interactive Dotfiles Deployment Script
 # Supports: Ubuntu/Debian, Arch Linux, macOS
 # TUI: whiptail
+#
+# Usage:
+#   ./interactive-deploy.sh                    # Interactive mode
+#   ./interactive-deploy.sh --dry-run tmux vim # Dry-run with specified packages
+#   ./interactive-deploy.sh --dry-run          # Dry-run (shows package selection)
 
 set -euo pipefail
 
@@ -10,6 +15,36 @@ set -euo pipefail
 # ============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DRY_RUN=false
+REQUESTED_PACKAGES=()
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --dry-run|-n)
+            DRY_RUN=true
+            shift
+            ;;
+        --help|-h)
+            echo "Usage: $0 [OPTIONS] [packages...]"
+            echo ""
+            echo "Options:"
+            echo "  --dry-run, -n    Show what would be installed without actually installing"
+            echo "  --help, -h       Show this help message"
+            echo ""
+            echo "Examples:"
+            echo "  $0                           # Interactive mode with package selection"
+            echo "  $0 --dry-run tmux vim        # Show what would be installed"
+            echo "  $0 --dry-run                 # Dry-run with package selection TUI"
+            exit 0
+            ;;
+        *)
+            # Collect package names
+            REQUESTED_PACKAGES+=("$1")
+            shift
+            ;;
+    esac
+done
 
 # Color codes
 if [[ -t 1 ]] && command -v tput &>/dev/null && tput colors &>/dev/null; then
@@ -17,14 +52,40 @@ if [[ -t 1 ]] && command -v tput &>/dev/null && tput colors &>/dev/null; then
     GREEN=$(tput setaf 2)
     YELLOW=$(tput setaf 3)
     BLUE=$(tput setaf 4)
+    BOLD=$(tput bold)
     NC=$(tput sgr0)
 else
     RED=''
     GREEN=''
     YELLOW=''
     BLUE=''
+    BOLD=''
     NC=''
 fi
+
+# ============================================================================
+# DRY RUN HELPERS
+# ============================================================================
+
+run_cmd() {
+    local cmd="$*"
+
+    if [[ "$DRY_RUN" == true ]]; then
+        echo -e "${BOLD}[DRY RUN]${NC} ${BLUE}$cmd${NC}"
+    else
+        eval "$cmd"
+    fi
+}
+
+sudo_run() {
+    local cmd="$*"
+
+    if [[ "$DRY_RUN" == true ]]; then
+        echo -e "${BOLD}[DRY RUN]${NC} ${BLUE}sudo $cmd${NC}"
+    else
+        sudo eval "$cmd"
+    fi
+}
 
 # ============================================================================
 # OS DETECTION
@@ -157,53 +218,53 @@ install_tmux_plugins() {
     local tpm_dir="$HOME/.tmux/plugins/tpm"
     if [[ ! -d "$tpm_dir" ]]; then
         echo -e "${YELLOW}Installing tmux plugin manager (TPM)...${NC}"
-        mkdir -p "$HOME/.tmux/plugins"
-        git clone https://github.com/tmux-plugins/tpm "$tpm_dir"
-        "$tpm_dir/bin/install_plugins"
+        run_cmd "mkdir -p $HOME/.tmux/plugins"
+        run_cmd "git clone https://github.com/tmux-plugins/tpm $tpm_dir"
+        run_cmd "$tpm_dir/bin/install_plugins"
     fi
 }
 
 install_oh_my_zsh() {
     if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
         echo -e "${YELLOW}Installing oh-my-zsh...${NC}"
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+        run_cmd "sh -c \"$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\" "" --unattended"
     fi
 }
 
 install_vim_plugins() {
     if [[ ! -d "$HOME/.vim/bundle/Vundle.vim" ]]; then
         echo -e "${YELLOW}Installing Vundle.vim...${NC}"
-        git clone https://github.com/gmarik/Vundle.vim.git "$HOME/.vim/bundle/Vundle.vim"
+        run_cmd "git clone https://github.com/gmarik/Vundle.vim.git $HOME/.vim/bundle/Vundle.vim"
     fi
-    vim +PluginInstall +qall
+    run_cmd "vim +PluginInstall +qall"
 }
 
 install_nvim_plugins() {
-    if command -v nvim &>/dev/null; then
+    if command -v nvim &>/dev/null || [[ "$DRY_RUN" == true ]]; then
         echo -e "${YELLOW}Installing Neovim plugins...${NC}"
-        nvim --headless "+Lazy! sync" +qa || true
+        run_cmd "nvim --headless \"+Lazy! sync\" +qa" || true
     fi
 }
 
 install_doom_emacs() {
     if [[ ! -d "$HOME/.config/emacs" ]]; then
         echo -e "${YELLOW}Installing Doom Emacs...${NC}"
-        git clone --depth 1 https://github.com/doomemacs/doomemacs "$HOME/.config/emacs"
-        "$HOME/.config/emacs/bin/doom" install
+        run_cmd "git clone --depth 1 https://github.com/doomemacs/doomemacs $HOME/.config/emacs"
+        run_cmd "$HOME/.config/emacs/bin/doom install"
     fi
 }
 
 install_spacemacs() {
     if [[ ! -d "$HOME/.emacs.d" ]]; then
         echo -e "${YELLOW}Installing Spacemacs...${NC}"
-        git clone https://github.com/syl20bnr/spacemacs "$HOME/.emacs.d"
+        run_cmd "git clone https://github.com/syl20bnr/spacemacs $HOME/.emacs.d"
     fi
 }
 
 install_base16_shell() {
     if [[ ! -d "$HOME/.config/base16-shell" ]]; then
         echo -e "${YELLOW}Installing base16-shell...${NC}"
-        git clone https://github.com/chriskempson/base16-shell.git "$HOME/.config/base16-shell"
+        run_cmd "git clone https://github.com/chriskempson/base16-shell.git $HOME/.config/base16-shell"
     fi
 }
 
@@ -215,23 +276,23 @@ install_nerd_fonts() {
     local font_dir="$HOME/.local/share/fonts"
     local fonts=("Hack" "FiraCode" "JetBrainsMono" "Meslo")
 
-    mkdir -p "$font_dir"
+    run_cmd "mkdir -p $font_dir"
 
     for font in "${fonts[@]}"; do
         echo -e "${YELLOW}Installing $font Nerd Font...${NC}"
         local url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$font.zip"
 
-        if [[ ! -d "$font_dir/$font" ]]; then
+        if [[ ! -d "$font_dir/$font" ]] || [[ "$DRY_RUN" == true ]]; then
             local temp_file=$(mktemp)
-            curl -fsSL "$url" -o "$temp_file"
-            unzip -q "$temp_file" -d "$font_dir/$font"
-            rm "$temp_file"
+            run_cmd "curl -fsSL $url -o $temp_file"
+            run_cmd "unzip -q $temp_file -d $font_dir/$font"
+            run_cmd "rm $temp_file"
         fi
     done
 
     # Refresh font cache
-    if command -v fc-cache &>/dev/null; then
-        fc-cache -f "$font_dir"
+    if command -v fc-cache &>/dev/null || [[ "$DRY_RUN" == true ]]; then
+        run_cmd "fc-cache -f $font_dir"
     fi
 
     echo -e "${GREEN}Nerd fonts installed successfully${NC}"
@@ -246,13 +307,15 @@ install_stow() {
         echo -e "${YELLOW}Installing GNU Stow...${NC}"
         case "$OS" in
             debian)
-                $PKG_INSTALL stow
+                sudo_run "$PKG_UPDATE"
+                sudo_run "$PKG_INSTALL stow"
                 ;;
             arch)
-                $PKG_INSTALL stow
+                sudo_run "$PKG_UPDATE"
+                sudo_run "$PKG_INSTALL stow"
                 ;;
             macos)
-                $PKG_INSTALL stow
+                run_cmd "$PKG_INSTALL stow"
                 ;;
         esac
     fi
@@ -262,9 +325,9 @@ deploy_with_stow() {
     local package="$1"
     echo -e "${BLUE}Deploying $package with stow...${NC}"
 
-    cd "$SCRIPT_DIR" || exit 1
+    run_cmd "cd $SCRIPT_DIR"
 
-    if stow "$package" -t "$HOME" 2>/dev/null; then
+    if run_cmd "stow $package -t $HOME" 2>/dev/null || [[ "$DRY_RUN" == true ]]; then
         echo -e "${GREEN}$package deployed successfully${NC}"
     else
         echo -e "${YELLOW}Warning: stow failed for $package${NC}"
@@ -285,26 +348,34 @@ install_system_packages() {
     fi
 
     echo -e "${BLUE}Installing system packages: ${packages[*]}${NC}"
-    $PKG_UPDATE
-    $PKG_INSTALL "${packages[@]}"
+    case "$OS" in
+        macos)
+            run_cmd "$PKG_UPDATE"
+            run_cmd "$PKG_INSTALL ${packages[*]}"
+            ;;
+        *)
+            sudo_run "$PKG_UPDATE"
+            sudo_run "$PKG_INSTALL ${packages[*]}"
+            ;;
+    esac
 }
 
 install_language_servers() {
     echo -e "${YELLOW}Installing language servers...${NC}"
 
     # Python language server
-    if command -v pip3 &>/dev/null; then
-        pip3 install --user python-lsp-server || true
+    if command -v pip3 &>/dev/null || [[ "$DRY_RUN" == true ]]; then
+        run_cmd "pip3 install --user python-lsp-server" || true
     fi
 
     # Node.js language servers
-    if command -v npm &>/dev/null; then
-        npm install -g typescript-language-server vscode-langservers-extracted || true
+    if command -v npm &>/dev/null || [[ "$DRY_RUN" == true ]]; then
+        run_cmd "npm install -g typescript-language-server vscode-langservers-extracted" || true
     fi
 
     # Rust analyzer
-    if command -v cargo &>/dev/null; then
-        cargo install rust-analyzer || true
+    if command -v cargo &>/dev/null || [[ "$DRY_RUN" == true ]]; then
+        run_cmd "cargo install rust-analyzer" || true
     fi
 }
 
@@ -397,25 +468,34 @@ check_conflicts() {
     for pkg in "${selected[@]}"; do
         case "$pkg" in
             vim|nvim)
-                ((editors++))
+                editors=$((editors + 1))
                 ;;
             emacs|spacemacs|doom_emacs)
-                ((emacs_variants++))
+                emacs_variants=$((emacs_variants + 1))
                 ;;
         esac
     done
 
     if [[ $editors -gt 1 ]]; then
-        whiptail --title "Conflict Warning" \
-            --msgbox "Warning: You've selected multiple editors (vim, nvim).\nOnly one editor is typically needed.\n\nContinuing with all selections." \
-            12 78
+        if [[ "$DRY_RUN" == true ]]; then
+            echo -e "${YELLOW}[DRY RUN] Warning: Multiple editors selected${NC}"
+        else
+            whiptail --title "Conflict Warning" \
+                --msgbox "Warning: You've selected multiple editors (vim, nvim).\nOnly one editor is typically needed.\n\nContinuing with all selections." \
+                12 78
+        fi
     fi
 
     if [[ $emacs_variants -gt 1 ]]; then
-        whiptail --title "Conflict Detected" \
-            --msgbox "Error: You can only install ONE Emacs variant.\n\nPlease choose between:\n- emacs\n- spacemacs\n- doom_emacs\n\nRun the script again." \
-            14 78
-        exit 1
+        if [[ "$DRY_RUN" == true ]]; then
+            echo -e "${RED}[DRY RUN] Error: Multiple Emacs variants selected${NC}"
+            exit 1
+        else
+            whiptail --title "Conflict Detected" \
+                --msgbox "Error: You can only install ONE Emacs variant.\n\nPlease choose between:\n- emacs\n- spacemacs\n- doom_emacs\n\nRun the script again." \
+                14 78
+            exit 1
+        fi
     fi
 }
 
@@ -425,6 +505,12 @@ ask_nerd_fonts() {
     # Check if any editor was selected
     for pkg in "${selected[@]}"; do
         if [[ "$pkg" =~ ^(vim|nvim|emacs|spacemacs|doom_emacs)$ ]]; then
+            if [[ "$DRY_RUN" == true ]]; then
+                # Auto-accept in dry-run mode
+                echo -e "${YELLOW}[DRY RUN] Would install Nerd Fonts (editors selected)${NC}"
+                return 0
+            fi
+
             if whiptail --title "Nerd Fonts" \
                 --yesno "Would you like to install popular Nerd Fonts?\n\nFonts: Hack, FiraCode, JetBrainsMono, Meslo\n\nThese fonts are required for proper icon display in your editor." \
                 12 78; then
@@ -441,8 +527,22 @@ ask_nerd_fonts() {
 show_summary() {
     local selected=("$@")
 
+    if [[ "$DRY_RUN" == true ]]; then
+        echo -e "${BOLD}========================================${NC}"
+        echo -e "${BOLD}Installation Summary (DRY RUN)${NC}"
+        echo -e "${BOLD}========================================${NC}"
+        echo "Packages: ${selected[*]}"
+        echo ""
+        return
+    fi
+
+    local mode_text=""
+    if [[ "$DRY_RUN" == true ]]; then
+        mode_text="\n${BOLD}${YELLOW}DRY RUN MODE${NC} - No actual changes will be made\n"
+    fi
+
     whiptail --title "Installation Summary" \
-        --msgbox "The following packages will be installed:\n\n${selected[*]}\n\nThis will:\n1. Install system packages\n2. Clone external repositories\n3. Install plugins\n4. Deploy configurations with GNU Stow\n\nPress OK to continue..." \
+        --msgbox "The following packages will be installed:\n\n${selected[*]}$mode_text\n\nThis will:\n1. Install system packages\n2. Clone external repositories\n3. Install plugins\n4. Deploy configurations with GNU Stow\n\nPress OK to continue..." \
         20 78
 }
 
@@ -457,11 +557,25 @@ main() {
     echo ""
     echo "Detected OS: $OS"
     echo "Package manager: $PKG_MANAGER"
+
+    if [[ "$DRY_RUN" == true ]]; then
+        echo -e "${BOLD}${YELLOW}DRY RUN MODE${NC} - No actual changes will be made"
+    fi
+
     echo ""
 
     # Show package selection
     local selected_packages
-    selected_packages=$(show_package_selection)
+    if [[ "$DRY_RUN" == true && ${#REQUESTED_PACKAGES[@]} -gt 0 ]]; then
+        # In dry-run mode with packages specified as arguments
+        selected_packages="${REQUESTED_PACKAGES[*]}"
+    elif [[ "$DRY_RUN" == true ]]; then
+        # In dry-run mode without packages, show TUI
+        selected_packages=$(show_package_selection)
+    else
+        # Normal interactive mode
+        selected_packages=$(show_package_selection)
+    fi
 
     if [[ -z "$selected_packages" ]]; then
         echo "No packages selected. Exiting."
