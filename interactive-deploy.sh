@@ -210,11 +210,6 @@ PACKAGES[noip_debian]="build-essential"
 PACKAGES[noip_arch]="base-devel"
 PACKAGES[noip_macos]=""
 
-# claude_provider
-PACKAGES[claude_provider_debian]="whiptail"
-PACKAGES[claude_provider_arch]="whiptail"
-PACKAGES[claude_provider_macos]="newt"
-
 # ============================================================================
 # EXTERNAL REPOSITORIES
 # ============================================================================
@@ -491,15 +486,7 @@ install_language_servers() {
 install_claude_provider_switcher() {
     echo -e "${YELLOW}Installing Claude Code Provider Switcher...${NC}"
 
-    # Ensure whiptail is installed
-    if ! command -v whiptail &>/dev/null; then
-        install_system_packages whiptail
-    fi
-
-    # Deploy with stow
-    deploy_with_stow "claude_provider"
-
-    # Add shell integration
+    # Add shell integration only - no dependencies
     add_claude_provider_integration
 
     echo -e "${GREEN}Claude Code Provider Switcher installed${NC}"
@@ -518,20 +505,153 @@ add_claude_provider_integration() {
         return
     fi
 
-    # Build shell-specific integration snippet
-    local integration_snippet='
+    # Build the full provider switcher code to inject directly
+    local switcher_code='
 
-# Claude Code Provider Switcher
-# Quick provider selection for Claude Code
-if [ -f "$HOME/.claude-provider-switch.sh" ]; then
-    source "$HOME/.claude-provider-switch.sh"
-fi
+# ============================================================================
+# CLAUDE CODE PROVIDER SWITCHER
+# ============================================================================
+
+# Provider names
+PROVIDER_CLAUDE_PRO="Claude Pro (Official)"
+PROVIDER_DEEPSEEK="DeepSeek"
+PROVIDER_KIMI="Kimi/Moonshot"
+PROVIDER_ZAI="Z.ai/GLM"
+PROVIDER_RESET="Reset to Default"
+
+# Detect current provider
+detect_current_provider() {
+    if [[ -z "${ANTHROPIC_BASE_URL:-}" ]]; then
+        echo "$PROVIDER_CLAUDE_PRO"
+        return
+    fi
+    
+    case "$ANTHROPIC_BASE_URL" in
+        *"deepseek"*) echo "$PROVIDER_DEEPSEEK" ;;
+        *"moonshot"*) echo "$PROVIDER_KIMI" ;;
+        *"z.ai"*) echo "$PROVIDER_ZAI" ;;
+        *) echo "Custom Provider" ;;
+    esac
+}
+
+# Show current provider
+show_claude_provider() {
+    local current_provider
+    current_provider=$(detect_current_provider)
+    
+    echo "Current Claude Code Provider: $current_provider"
+    [[ -n "${ANTHROPIC_BASE_URL:-}" ]] && echo "  Base URL: $ANTHROPIC_BASE_URL"
+    [[ -n "${ANTHROPIC_MODEL:-}" ]] && echo "  Model: $ANTHROPIC_MODEL"
+    [[ -n "${ANTHROPIC_SMALL_FAST_MODEL:-}" ]] && echo "  Fast Model: $ANTHROPIC_SMALL_FAST_MODEL"
+}
+
+# Clear all custom environment variables
+_clear_custom_env() {
+    unset ANTHROPIC_BASE_URL ANTHROPIC_AUTH_TOKEN ANTHROPIC_MODEL
+    unset ANTHROPIC_SMALL_FAST_MODEL API_TIMEOUT_MS
+    unset CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC
+}
+
+# Switch to Claude Pro (reset to default)
+switch_to_claude_pro() {
+    _clear_custom_env
+    echo "Switched to: $PROVIDER_CLAUDE_PRO"
+    echo "Claude Code will use OAuth authentication"
+}
+
+# Switch to DeepSeek
+switch_to_deepseek() {
+    _clear_custom_env
+    
+    if [[ -z "${DEEPSEEK_API_KEY:-}" ]]; then
+        echo "Error: DEEPSEEK_API_KEY not found in environment"
+        return 1
+    fi
+    
+    export ANTHROPIC_BASE_URL="https://api.deepseek.com/anthropic"
+    export ANTHROPIC_AUTH_TOKEN="$DEEPSEEK_API_KEY"
+    export API_TIMEOUT_MS="600000"
+    export ANTHROPIC_MODEL="deepseek-chat"
+    export ANTHROPIC_SMALL_FAST_MODEL="deepseek-chat"
+    export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1"
+    
+    echo "Switched to: $PROVIDER_DEEPSEEK"
+}
+
+# Switch to Kimi/Moonshot
+switch_to_kimi() {
+    _clear_custom_env
+    
+    if [[ -z "${MOONSHOT_API_KEY:-}" ]]; then
+        echo "Error: MOONSHOT_API_KEY not found in environment"
+        return 1
+    fi
+    
+    export ANTHROPIC_BASE_URL="https://api.moonshot.cn/anthropic"
+    export ANTHROPIC_AUTH_TOKEN="$MOONSHOT_API_KEY"
+    export ANTHROPIC_MODEL="kimi-k2-thinking-turbo"
+    export ANTHROPIC_SMALL_FAST_MODEL="kimi-k2-turbo-preview"
+    
+    echo "Switched to: $PROVIDER_KIMI"
+}
+
+# Switch to Z.ai/GLM
+switch_to_zai() {
+    _clear_custom_env
+    
+    if [[ -z "${ZAI_GLOBAL_AUTH_TOKEN:-}" ]]; then
+        echo "Error: ZAI_GLOBAL_AUTH_TOKEN not found in environment"
+        return 1
+    fi
+    
+    export ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic"
+    export ANTHROPIC_AUTH_TOKEN="$ZAI_GLOBAL_AUTH_TOKEN"
+    export API_TIMEOUT_MS="3000000"
+    
+    echo "Switched to: $PROVIDER_ZAI"
+}
+
+# Reset provider
+reset_claude_provider() {
+    switch_to_claude_pro
+}
+
+# TUI Menu
+switch_claude_provider() {
+    local current_provider
+    current_provider=$(detect_current_provider)
+    
+    echo ""
+    echo "Current Provider: $current_provider"
+    echo ""
+    echo "Select provider:"
+    echo "  1) $PROVIDER_CLAUDE_PRO"
+    echo "  2) $PROVIDER_DEEPSEEK"
+    echo "  3) $PROVIDER_KIMI"
+    echo "  4) $PROVIDER_ZAI"
+    echo "  5) $PROVIDER_RESET"
+    echo ""
+    read -p "Enter number (1-5): " choice
+    
+    case "$choice" in
+        1) switch_to_claude_pro ;;
+        2) switch_to_deepseek ;;
+        3) switch_to_kimi ;;
+        4) switch_to_zai ;;
+        5) switch_to_claude_pro ;;
+        *) echo "Invalid choice" ;;
+    esac
+}
+
+# ============================================================================
+# END CLAUDE CODE PROVIDER SWITCHER
+# ============================================================================
 '
 
     # Add to each shell config
     for config in "${shell_configs[@]}"; do
-        if ! grep -q "claude-provider-switch" "$config" 2>/dev/null; then
-            echo "$integration_snippet" >> "$config"
+        if ! grep -q "CLAUDE CODE PROVIDER SWITCHER" "$config" 2>/dev/null; then
+            echo "$switcher_code" >> "$config"
             echo -e "${GREEN}Added provider switcher to $(basename "$config")${NC}"
         else
             echo -e "${YELLOW}Provider switcher already in $(basename "$config")${NC}"
@@ -582,8 +702,10 @@ install_package() {
             ;;
     esac
 
-    # Deploy with stow
-    deploy_with_stow "$package"
+    # Deploy with stow (skip for claude_provider as it's shell-only)
+    if [[ "$package" != "claude_provider" ]]; then
+        deploy_with_stow "$package"
+    fi
 }
 
 # ============================================================================
