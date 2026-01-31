@@ -7,3 +7,18 @@
 
 audit.json
 .aider.*
+
+# Secrets and credentials
+*.key
+*.pem
+.env
+.env.local
+.env.*.local
+.secret
+.secrets
+
+# Config files that may contain credentials
+shadowsocks/
+
+# Device-specific scripts
+scripts/mba_wifi.sh

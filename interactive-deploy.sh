@@ -210,6 +210,11 @@ PACKAGES[noip_debian]="build-essential"
 PACKAGES[noip_arch]="base-devel"
 PACKAGES[noip_macos]=""
 
+# claude_provider
+PACKAGES[claude_provider_debian]="whiptail"
+PACKAGES[claude_provider_arch]="whiptail"
+PACKAGES[claude_provider_macos]="newt"
+
 # ============================================================================
 # EXTERNAL REPOSITORIES
 # ============================================================================
@@ -360,6 +365,106 @@ install_system_packages() {
     esac
 }
 
+# ============================================================================
+# SECRETS FILE HELPER
+# ============================================================================
+
+detect_secrets_file() {
+    if [[ -f "$HOME/.secret" ]]; then
+        echo "$HOME/.secret"
+    elif [[ -f "$HOME/.secrets" ]]; then
+        echo "$HOME/.secrets"
+    else
+        echo ""
+    fi
+}
+
+offer_secrets_sourcing() {
+    local secrets_file
+    secrets_file=$(detect_secrets_file)
+
+    if [[ -z "$secrets_file" ]]; then
+        return
+    fi
+
+    local secrets_basename
+    secrets_basename=$(basename "$secrets_file")
+
+    echo -e "${YELLOW}Detected secrets file: $secrets_file${NC}"
+
+    # Determine which shell config to modify
+    local shell_configs=()
+    [[ -f "$HOME/.zshrc" ]] && shell_configs+=("$HOME/.zshrc")
+    [[ -f "$HOME/.bashrc" ]] && shell_configs+=("$HOME/.bashrc")
+
+    if [[ ${#shell_configs[@]} -eq 0 ]]; then
+        echo -e "${YELLOW}No .zshrc or .bashrc found. Skipping secrets sourcing setup.${NC}"
+        return
+    fi
+
+    # Check if already sourced in any config
+    for config in "${shell_configs[@]}"; do
+        if grep -q "source.*$secrets_basename" "$config" 2>/dev/null || \
+           grep -q "\. .*$secrets_basename" "$config" 2>/dev/null; then
+            echo -e "${GREEN}$secrets_basename is already sourced in $(basename "$config")${NC}"
+            return
+        fi
+    done
+
+    local snippet
+    snippet=$(cat <<'SNIPPET_EOF'
+
+# Source secrets file if it exists (API keys, credentials, etc.)
+if [ -f "$HOME/.secret" ]; then
+    source "$HOME/.secret"
+elif [ -f "$HOME/.secrets" ]; then
+    source "$HOME/.secrets"
+fi
+SNIPPET_EOF
+)
+
+    if [[ "$DRY_RUN" == true ]]; then
+        echo -e "${BOLD}[DRY RUN]${NC} Would offer to add secrets sourcing to shell config"
+        echo -e "${BLUE}Snippet:${NC}"
+        echo "$snippet"
+        return
+    fi
+
+    # Build menu options for whiptail
+    local menu_options=()
+    for config in "${shell_configs[@]}"; do
+        menu_options+=("$(basename "$config")" "$config")
+    done
+    menu_options+=("Skip" "Don't add sourcing snippet")
+
+    local choice
+    choice=$(whiptail --title "Secrets File Detected" \
+        --menu "Found $secrets_file\n\nWould you like to add a snippet to source it in your shell config?\n\nThis keeps your API keys and credentials secure while making them available in your shell." \
+        18 78 ${#menu_options[@]} \
+        "${menu_options[@]}" \
+        3>&1 1>&2 2>&3)
+
+    if [[ -z "$choice" || "$choice" == "Skip" ]]; then
+        echo -e "${YELLOW}Skipping secrets sourcing setup.${NC}"
+        return
+    fi
+
+    # Find the full path for the selected config
+    local target_config=""
+    for config in "${shell_configs[@]}"; do
+        if [[ "$(basename "$config")" == "$choice" ]]; then
+            target_config="$config"
+            break
+        fi
+    done
+
+    if [[ -n "$target_config" ]]; then
+        echo "$snippet" >> "$target_config"
+        echo -e "${GREEN}Added secrets sourcing snippet to $target_config${NC}"
+        echo -e "${YELLOW}Remember to run: source $target_config${NC}"
+    fi
+}
+
 install_language_servers() {
     echo -e "${YELLOW}Installing language servers...${NC}"
 
@@ -377,6 +482,61 @@ install_language_servers() {
     if command -v cargo &>/dev/null || [[ "$DRY_RUN" == true ]]; then
         run_cmd "cargo install rust-analyzer" || true
     fi
+}
+
+# ============================================================================
+# CLAUDE PROVIDER SWITCHER
+# ============================================================================
+
+install_claude_provider_switcher() {
+    echo -e "${YELLOW}Installing Claude Code Provider Switcher...${NC}"
+
+    # Ensure whiptail is installed
+    if ! command -v whiptail &>/dev/null; then
+        install_system_packages whiptail
+    fi
+
+    # Deploy with stow
+    deploy_with_stow "claude_provider"
+
+    # Add shell integration
+    add_claude_provider_integration
+
+    echo -e "${GREEN}Claude Code Provider Switcher installed${NC}"
+    echo -e "${YELLOW}Run 'switch_claude_provider' to switch providers${NC}"
+}
+
+add_claude_provider_integration() {
+    local shell_configs=()
+
+    # Detect which shell configs exist
+    [[ -f "$HOME/.bashrc" ]] && shell_configs+=("$HOME/.bashrc")
+    [[ -f "$HOME/.zshrc" ]] && shell_configs+=("$HOME/.zshrc")
+
+    if [[ ${#shell_configs[@]} -eq 0 ]]; then
+        echo -e "${YELLOW}No .bashrc or .zshrc found. Skipping shell integration.${NC}"
+        return
+    fi
+
+    # Build shell-specific integration snippet
+    local integration_snippet='
+
+# Claude Code Provider Switcher
+# Quick provider selection for Claude Code
+if [ -f "$HOME/.claude-provider-switch.sh" ]; then
+    source "$HOME/.claude-provider-switch.sh"
+fi
+'
+
+    # Add to each shell config
+    for config in "${shell_configs[@]}"; do
+        if ! grep -q "claude-provider-switch" "$config" 2>/dev/null; then
+            echo "$integration_snippet" >> "$config"
+            echo -e "${GREEN}Added provider switcher to $(basename "$config")${NC}"
+        else
+            echo -e "${YELLOW}Provider switcher already in $(basename "$config")${NC}"
+        fi
+    done
 }
 
 # ============================================================================
@@ -417,6 +577,9 @@ install_package() {
         spacemacs)
             install_spacemacs
             ;;
+        claude_provider)
+            install_claude_provider_switcher
+            ;;
     esac
 
     # Deploy with stow
@@ -442,6 +605,7 @@ show_package_selection() {
         "regolith3" "Regolith 3 desktop" OFF
         "w3m" "Text-based web browser" OFF
         "noip" "No-IP DUC" OFF
+        "claude_provider" "Claude Code provider switcher with TUI" OFF
     )
 
     # Check if whiptail is available
@@ -453,7 +617,7 @@ show_package_selection() {
     local selected_packages
     selected_packages=$(whiptail --title "Dotfiles Deployment" \
         --checklist "Select packages to install (SPACE to select, ENTER to continue):" \
-        20 78 13 \
+        22 78 14 \
         "${packages[@]}" \
         3>&1 1>&2 2>&3)
 
@@ -564,6 +728,9 @@ main() {
 
     echo ""
 
+    # Offer to set up secrets sourcing first
+    offer_secrets_sourcing
+
     # Show package selection
     local selected_packages
     if [[ "$DRY_RUN" == true && ${#REQUESTED_PACKAGES[@]} -gt 0 ]]; then
@@ -603,8 +770,20 @@ main() {
     # Install stow first
     install_stow
 
-    # Install language servers
-    install_language_servers
+    # Check if we need language servers (only for editor packages)
+    local need_lang_servers=false
+    for package in "${selected_array[@]}"; do
+        case "$package" in
+            vim|nvim|emacs|spacemacs|doom_emacs)
+                need_lang_servers=true
+                ;;
+        esac
+    done
+
+    # Install language servers only if needed
+    if [[ "$need_lang_servers" == true ]]; then
+        install_language_servers
+    fi
 
     # Install each package
     for package in "${selected_array[@]}"; do

@@ -78,10 +78,11 @@ deepseek: true
 #openai-organization-id: xxx
 
 ## Set an environment variable (to control API settings, can be used multiple times)
+## Note: API keys should be set in ~/.secret or environment, not in config files
 #set-env: xxx
 ## Specify multiple values like this:
-set-env:
-  - DEEPSEEK_API_KEY=sk-e8be341407c049d4ac2c444616570197
+#set-env:
+#  - DEEPSEEK_API_KEY=your-key-here
 #  - yyy
 #  - zzz
 
