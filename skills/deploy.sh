@@ -53,7 +53,7 @@ ${YELLOW}Available packages:${NC}
   tmux            - Deploy tmux configuration with plugin manager
   oh-my-zsh       - Deploy oh-my-zsh configuration
   vim             - Deploy vim configuration
-  nvim            - Deploy nvim configuration (kickstart.nvim)
+  nvim            - Deploy nvim configuration (LazyVim)
   emacs           - Deploy emacs configuration
   spacemacs       - Deploy spacemacs configuration
   doom_emacs      - Deploy doom_emacs configuration

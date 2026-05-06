@@ -26,7 +26,7 @@ chmod +x skills/deploy.sh
 - **tmux** - Tmux configuration with plugin manager (TPM)
 - **oh-my-zsh** - Oh My Zsh shell configuration
 - **vim** - Vim editor configuration
-- **nvim/kickstart.nvim** - Neovim configuration (kickstart.nvim fork)
+- **nvim** - Neovim configuration (LazyVim)
 - **emacs** - GNU Emacs configuration
 - **spacemacs** - Spacemacs configuration
 - **doom_emacs** - Doom Emacs configuration

@@ -1,51 +1,55 @@
-#+Title: Welcome
+#+Title: Dotfiles
 
-* Quick Start (Interactive Installation)
+GNU Stow-managed dotfiles. Each top-level directory is a stow package — stow it and files symlink into ~.
 
-The easiest way to get started is using the interactive deployment script. It will guide you through selecting which packages to install and handle all dependencies automatically.
+* AI Agent Deployment
+
+This repo includes ~AGENTS.md~ at the root — compatible with Claude Code, Codex, Cursor, and any tool that reads agent manifests. Point your AI agent here and ask it to deploy what you need.
+
+* Quick Start (Manual)
+
+First install GNU Stow:
 
 #+BEGIN_SRC bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/linxichen/dotfiles/master/interactive-deploy.sh)"
+# macOS
+brew install stow
+# Debian/Ubuntu
+sudo apt install -y stow
+# Arch
+sudo pacman -S stow
 #+END_SRC
 
-Or after cloning the repository:
+Then clone and stow what you want:
 
 #+BEGIN_SRC bash
-./interactive-deploy.sh
+git clone https://github.com/linxichen/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+stow tmux -t ~       # deploy tmux config
+stow oh-my-zsh -t ~  # deploy zsh config
 #+END_SRC
 
-The interactive script supports:
-- Ubuntu/Debian Linux
-- Arch Linux
-- macOS (with Homebrew)
+Unstow or restow:
 
-It will automatically install system packages, language servers, clone external repositories (TPM, oh-my-zsh, etc.), and deploy configurations using GNU Stow.
-
-* How to clone properly
-I included my kickstart.nvim fork as a subpackge thus it needed to be clone as well...
 #+BEGIN_SRC bash
-git clone --recurse-submodules https://github.com/linxichen/dotfiles.git
-git clone --recurse-submodules ssh://git@github.com:linxichen/dotfiles.git
+stow nvim -D -t ~    # remove
+stow nvim -R -t ~    # restow
 #+END_SRC
 
-* How to deploy dotfiles (Manual Method)
+* Per-Package Setup
 
-First make sure you cd to the root directory of this repo.
+Some packages need external repos cloned or plugins installed after stowing. See ~AGENTS.md~ for the full manifest, or:
 
-Make sure deploy.sh is executable
-#+BEGIN_SRC bash
-chmod +x ./deploy.sh
-#+END_SRC
+| Package     | Extra Setup |
+|-------------+-------------|
+| tmux        | Clone TPM: ~git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm~ then run ~install_plugins~ |
+| oh-my-zsh   | Install oh-my-zsh first |
+| vim         | Clone Vundle, run ~vim +PluginInstall +qall~ |
+| nvim        | None — LazyVim self-bootstraps on first launch |
+| spacemacs   | Clone spacemacs to ~~/.emacs.d~ |
+| doom_emacs  | Clone doom to ~~/.config/emacs~, run ~doom install~ |
 
-Call deploy.sh with name of package
-#+BEGIN_SRC bash
-./deploy.sh tmux
-#+END_SRC
+* Legacy Scripts
 
-This command initialize properly (e.g. clone tpm) and use stow to symlink everything under package directory to ~. That is, tmux/.tmux.conf will be sym linked to ~/.tmux.conf, etc.
+~skills/deploy.sh~ is a convenience wrapper around stow for humans. Not needed for agent deployment.
 
-To delete or re-stow the package, do the following
-#+BEGIN_SRC bash
-stow nvim -D -t ~
-stow nvim -R -t ~
-#+END_SRC
+
