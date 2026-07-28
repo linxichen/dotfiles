@@ -58,20 +58,43 @@ is_stow_package() {
     return 1
 }
 
-# The command that must exist for a package to be worth deploying. Identity for
-# most packages; these are the ones that cannot be derived from the name.
-required_command() {
+# How to tell whether the tool a package configures is actually in use here.
+# Echoes "<kind> <value>", where kind is cmd or dir.
+#
+# Most packages are named after a command on PATH. oh-my-zsh is not: it is a
+# shell framework installed as a directory, and probing for `zsh` would always
+# succeed on macOS and happily deploy an oh-my-zsh .zshrc over a different
+# shell setup (starship, say). Probe for the framework itself.
+install_probe() {
     case "$1" in
-        oh-my-zsh)      echo "zsh" ;;
-        kickstart.nvim) echo "nvim" ;;
-        regolith3)      echo "i3" ;;
-        *)              echo "$1" ;;
+        oh-my-zsh) echo "dir $TARGET/.oh-my-zsh" ;;
+        regolith3) echo "cmd i3" ;;
+        *)         echo "cmd $1" ;;
+    esac
+}
+
+is_installed() {
+    local kind value
+    read -r kind value <<<"$(install_probe "$1")"
+    case "$kind" in
+        cmd) command -v "$value" &>/dev/null ;;
+        dir) [[ -d "$value" ]] ;;
+    esac
+}
+
+# Human-readable reason a package was skipped.
+install_hint() {
+    local kind value tilde='~'
+    read -r kind value <<<"$(install_probe "$1")"
+    case "$kind" in
+        cmd) echo "$value not on PATH" ;;
+        dir) echo "${value/#$HOME/$tilde} not present" ;;
     esac
 }
 
 # Fetch external dependencies a package needs. Runs before stow, for packages
 # about to be stowed, and only when the dependency is missing. Sources must
-# exist before stow so it has something to link (kickstart.nvim especially).
+# exist before stow so it has something to link.
 bootstrap() {
     case "$1" in
         tmux)
@@ -87,12 +110,6 @@ bootstrap() {
                 echo -e "${YELLOW}  bootstrapping oh-my-zsh...${NC}"
                 RUNZSH=no KEEP_ZSHRC=yes sh -c \
                     "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-            fi
-            ;;
-        kickstart.nvim)
-            if [[ ! -e "$SCRIPT_DIR/kickstart.nvim/.config/nvim/init.lua" ]]; then
-                echo -e "${YELLOW}  fetching kickstart.nvim submodule...${NC}"
-                git -C "$SCRIPT_DIR" submodule update --init kickstart.nvim/.config/nvim
             fi
             ;;
         vim)
@@ -134,13 +151,6 @@ finalize() {
             else
                 echo -e "${YELLOW}  no tty; skipping :PluginInstall${NC}"
                 echo -e "${DIM}    run 'vim +PluginInstall +qall' in a terminal${NC}"
-            fi
-            ;;
-        kickstart.nvim)
-            if command -v nvim &>/dev/null; then
-                echo -e "${YELLOW}  syncing neovim plugins...${NC}"
-                nvim --headless "+Lazy! sync" +qa >/dev/null 2>&1 \
-                    || echo -e "${YELLOW}  neovim plugin sync failed; run :Lazy sync in nvim${NC}"
             fi
             ;;
     esac
@@ -239,11 +249,10 @@ main() {
     # Plan
     echo -e "${BLUE}Planning deployment into $TARGET${NC}"
     echo
-    local to_deploy=() conflicts=() pkg cmd state
+    local to_deploy=() conflicts=() pkg state
     for pkg in "${candidates[@]}"; do
-        cmd="$(required_command "$pkg")"
-        if [[ "$SKIP_PATH_CHECK" != true ]] && ! command -v "$cmd" &>/dev/null; then
-            printf "  %-18s ${DIM}skipped (%s not on PATH)${NC}\n" "$pkg" "$cmd"
+        if [[ "$SKIP_PATH_CHECK" != true ]] && ! is_installed "$pkg"; then
+            printf "  %-18s ${DIM}skipped (%s)${NC}\n" "$pkg" "$(install_hint "$pkg")"
             continue
         fi
         state="$(plan_package "$pkg")"

@@ -68,24 +68,32 @@ being shaped correctly. A declarative manifest enumerating all packages was
 considered and rejected: with 9 packages it would restate what the directory
 layout already encodes, and would drift from it.
 
-Classified in (9): `aider`, `herdr`, `kickstart.nvim`, `kitty`, `oh-my-zsh`,
-`regolith3`, `tmux`, `wezterm`, `vim` (after conversion).
+Classified in (8): `aider`, `herdr`, `kitty`, `oh-my-zsh`, `regolith3`,
+`tmux`, `wezterm`, `vim` (after conversion).
 
 Classified out (11): `install`, `skills`, `noip`, `ubuntu_profile_d`, `emacs`,
 `macprofile`, `spacemacs`, `i3`, `doom_emacs`, `w3m`, `docs`.
 
-#### `required_command`
+#### `install_probe`
 
-A `case` mapping package name to the command that must exist on `PATH`. Identity
-for most packages; the exceptions cannot be derived from the directory name:
+Answers whether the tool a package configures is actually present. Most packages
+are named after a command on `PATH`; two are not:
 
-| Package | Command |
-|---|---|
-| `oh-my-zsh` | `zsh` |
-| `kickstart.nvim` | `nvim` |
-| `regolith3` | `i3` |
+| Package | Probe | Why |
+|---|---|---|
+| `regolith3` | `i3` on `PATH` | different name |
+| `oh-my-zsh` | `~/.oh-my-zsh` directory | `zsh` is always present, even unused |
 
-A package whose command is absent is skipped with the reason printed. As a side
+The `oh-my-zsh` case is a correctness issue, not a convenience: probing for `zsh`
+succeeds on any macOS machine, so the package always planned as deployable and
+would have overwritten an unrelated shell setup (starship) with an oh-my-zsh
+`.zshrc` that sources a framework which is not installed. Only a pre-existing
+`~/.zshrc` conflict prevented that.
+
+The probe follows `--target`, so tests against a throwaway directory see the
+package as not installed.
+
+A package that fails its probe is skipped with the reason printed. As a side
 effect `regolith3` self-skips on macOS.
 
 `--all` bypasses this check.
@@ -94,13 +102,12 @@ effect `regolith3` self-skips on macOS.
 
 Fetches external sources. Runs only for packages about to be stowed, and only
 when the dependency is missing. This must precede stow so there is something to
-link — `kickstart.nvim` in particular.
+link.
 
 | Package | Action |
 |---|---|
 | `tmux` | clone `tmux-plugins/tpm` into `~/.tmux/plugins/tpm` |
 | `oh-my-zsh` | run the upstream oh-my-zsh installer |
-| `kickstart.nvim` | `git submodule update --init` |
 | `vim` | clone `VundleVim/Vundle.vim` into `~/.vim/bundle` |
 
 No `sudo`, no package manager invocation.
@@ -114,7 +121,6 @@ the config file stow has just linked into place.
 |---|---|
 | `tmux` | `tpm/bin/install_plugins` |
 | `vim` | `vim +PluginInstall +qall` |
-| `kickstart.nvim` | `nvim --headless "+Lazy! sync" +qa` |
 
 Failures are reported but do not abort the run: one unreachable plugin
 repository must not leave the remaining packages unstowed.
@@ -130,7 +136,8 @@ For each candidate package, run `stow -n` and classify the outcome as one of:
 - `link` — will create new symlinks
 - `already linked` — nothing to do, re-running is a no-op
 - `CONFLICT` — an existing non-symlink target is in the way
-- `skipped` — not stow-shaped, or required command not on `PATH`
+- `skipped` — not stow-shaped, or its `install_probe` failed
+- `empty` — stow-shaped but holds no files (see below)
 
 Print as a table. This phase has no side effects.
 
@@ -173,15 +180,17 @@ user asked for it explicitly.
   `install/install_redhat.sh`, `install/install_ubuntu.sh`, `deploy.sh.bak`.
 - Keep `install/openvpn_ubuntu.sh`; it is unrelated to dotfiles deployment.
 - `chmod +x deploy.sh`.
-- Rewrite `README.org`: remove the curl one-liner, document
-  `git clone --recurse-submodules` followed by `./deploy.sh`.
+- Rewrite `README.org`: remove the curl one-liner, document `git clone`
+  followed by `./deploy.sh`, and add a hand-deployment procedure for agents.
+- Remove the `kickstart.nvim` package and its submodule; no longer used. This
+  leaves `.gitmodules` empty, so delete it too.
 
 ## Testing
 
 The plan phase is side-effect-free, which makes it directly testable. Against a
 throwaway `--target` directory, assert:
 
-1. All 9 expected packages classify in; all 11 expected directories classify out.
+1. All 8 expected packages classify in; all 11 expected directories classify out.
 2. A package whose required command is absent is reported `skipped`, not `link`.
 3. A seeded conflicting regular file produces `CONFLICT`, the file is unchanged
    after a full run, and the exit status is non-zero.

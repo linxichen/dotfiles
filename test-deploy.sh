@@ -16,7 +16,7 @@ trap 'rm -rf "$WORK"' EXIT
 echo "== 1. classification =="
 fresh
 OUT="$("$REPO/deploy.sh" --dry-run --all --target "$WORK" 2>&1)"
-for p in aider herdr kickstart.nvim kitty oh-my-zsh regolith3 tmux wezterm vim; do
+for p in aider herdr kitty oh-my-zsh regolith3 tmux wezterm vim; do
     if grep -qE "^  $p +" <<<"$OUT"; then ok "classified in: $p"; else bad "classified in: $p"; fi
 done
 for p in install skills noip ubuntu_profile_d emacs macprofile spacemacs i3 doom_emacs w3m docs; do
@@ -31,6 +31,17 @@ if grep -qE "^  regolith3 +.*skipped \(i3 not on PATH\)" <<<"$OUT"; then
 else bad "regolith3 should be skipped (got: $(grep regolith3 <<<"$OUT"))"; fi
 if grep -qE "^  tmux +.*will link" <<<"$OUT"; then ok "tmux planned, tmux installed"
 else bad "tmux should be planned"; fi
+
+# oh-my-zsh must probe for the framework directory, not for `zsh`. zsh is always
+# present on macOS, so a command probe would deploy an oh-my-zsh .zshrc over a
+# starship setup.
+# The probe follows --target, so under a throwaway target .oh-my-zsh is absent
+# and the package must be skipped even though zsh itself is on PATH.
+grep -qE "^  oh-my-zsh +.*skipped \(.*\.oh-my-zsh not present\)" <<<"$OUT" \
+    && ok "oh-my-zsh probes the framework dir, not zsh" \
+    || bad "oh-my-zsh should be skipped (got: $(grep oh-my-zsh <<<"$OUT"))"
+command -v zsh >/dev/null && ok "…and zsh IS on PATH, so a command probe would have wrongly deployed it" \
+    || echo "  SKIP: zsh not on PATH, cannot demonstrate the false positive"
 
 echo "== 3. conflict is reported, file untouched, exit non-zero =="
 fresh
@@ -78,16 +89,18 @@ fresh
     || ok "nothing leaked to target root"
 
 echo "== 9. empty package is not mistaken for already-linked =="
+# An empty package (an uninitialized submodule, say) makes stow report "nothing
+# to link", which is indistinguishable from "already stowed" unless content is
+# checked explicitly. Build a synthetic empty package to keep that covered.
 fresh
+EMPTY_PKG="$REPO/zz_test_empty_pkg"
+rm -rf "$EMPTY_PKG"; mkdir -p "$EMPTY_PKG/.config"
 OUT="$("$REPO/deploy.sh" --dry-run --all --target "$WORK" 2>&1)"
-if [ -z "$(find "$REPO/kickstart.nvim" -type f -print -quit)" ]; then
-    grep -qE "^  kickstart.nvim +.*empty" <<<"$OUT" && ok "empty package reported as empty" \
-        || bad "empty package misreported: $(grep kickstart <<<"$OUT")"
-    grep -q "submodule update --init" <<<"$OUT" && ok "names the submodule fix" \
-        || bad "no submodule hint"
-else
-    echo "  SKIP: submodule is populated, cannot test empty case"
-fi
+rm -rf "$EMPTY_PKG"
+grep -qE "^  zz_test_empty_pkg +.*empty" <<<"$OUT" && ok "empty package reported as empty" \
+    || bad "empty package misreported: $(grep zz_test <<<"$OUT" || echo 'not listed at all')"
+grep -qE "^  zz_test_empty_pkg +.*already linked" <<<"$OUT" \
+    && bad "empty package misreported as already linked" || ok "not called already-linked"
 
 echo
 echo "passed: $PASS  failed: $FAIL"
