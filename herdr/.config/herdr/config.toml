@@ -57,12 +57,27 @@ close_tab = "prefix+&"
 # resize_mode (prefix+r), settings (prefix+s), new_workspace (prefix+shift+n),
 # new_worktree (prefix+shift+g), edit_scrollback (prefix+e), etc.
 
+# tmux: prefix [ = copy-mode (scroll pane history with the keyboard).
+# Not listed in `herdr --default-config`, but it is a real action -- an
+# unknown key here is reported by `herdr config check`, and this one is not.
+copy_mode = "prefix+["
+
+# Navigate mode (opened with prefix+g).
+#
 # tmux: set-window-option -g mode-keys vi
-#   herdr's navigate mode is already hjkl by default:
+#   Pane movement is already hjkl by default, so it is only documented here:
 # navigate_pane_left = "h"
 # navigate_pane_down = "j"
 # navigate_pane_up = "k"
 # navigate_pane_right = "l"
+#
+# Workspace movement defaults to the arrow keys. Move it to shift+J/shift+K so
+# navigate mode is fully home-row. Plain j/k cannot be used: they are already
+# pane down/up above, and herdr's config check does NOT flag that collision --
+# it validates key syntax, not double-bound keys -- so the conflict would be
+# silent with undefined precedence.
+navigate_workspace_down = "shift+j"
+navigate_workspace_up = "shift+k"
 
 [ui]
 # tmux: set -g mouse on
