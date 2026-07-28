@@ -72,15 +72,33 @@ stow tmux -R -t ~    # restow (after adding files to a package)
 
 * Bootstrapping
 
-Some packages need an external repository, cloned automatically on deploy when
-missing:
+Deployment runs in two phases around stow.
 
-| Package        | Bootstrap                        |
-|----------------+----------------------------------|
-| tmux           | tmux plugin manager (TPM)        |
-| oh-my-zsh      | oh-my-zsh installer              |
-| kickstart.nvim | =git submodule update --init=    |
+*Before* stow, missing external sources are fetched:
 
-After deploying tmux, press =prefix+I= inside tmux to install plugins.
+| Package        | Fetched                       |
+|----------------+-------------------------------|
+| tmux           | tmux plugin manager (TPM)     |
+| oh-my-zsh      | oh-my-zsh installer           |
+| kickstart.nvim | =git submodule update --init= |
+| vim            | Vundle.vim                    |
+
+*After* stow, plugins are installed — this has to come second, because every
+plugin manager reads the config file stow has just linked into place:
+
+| Package        | Installs plugins with     |
+|----------------+---------------------------|
+| tmux           | =tpm/bin/install_plugins= |
+| vim            | =:PluginInstall=          |
+| kickstart.nvim | =:Lazy! sync=             |
+
+Plugin installation failures are reported but do not abort the deployment; one
+unreachable plugin repository will not leave the remaining packages unstowed.
+
+Vundle drives a real Vim UI and hangs without a controlling terminal, so
+=:PluginInstall= is skipped when =deploy.sh= has no tty (piped input, CI). Run
+=vim +PluginInstall +qall= in a terminal afterwards, or re-run =deploy.sh=
+interactively.
+
 After deploying herdr, run =herdr server reload-config= to apply without
 restarting.

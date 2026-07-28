@@ -69,8 +69,9 @@ required_command() {
     esac
 }
 
-# Clone external dependencies a package needs. Runs only for packages about to
-# be stowed, and only when the dependency is missing.
+# Fetch external dependencies a package needs. Runs before stow, for packages
+# about to be stowed, and only when the dependency is missing. Sources must
+# exist before stow so it has something to link (kickstart.nvim especially).
 bootstrap() {
     case "$1" in
         tmux)
@@ -92,6 +93,54 @@ bootstrap() {
             if [[ ! -e "$SCRIPT_DIR/kickstart.nvim/.config/nvim/init.lua" ]]; then
                 echo -e "${YELLOW}  fetching kickstart.nvim submodule...${NC}"
                 git -C "$SCRIPT_DIR" submodule update --init kickstart.nvim/.config/nvim
+            fi
+            ;;
+        vim)
+            local vundle="$TARGET/.vim/bundle/Vundle.vim"
+            if [[ ! -d "$vundle" ]]; then
+                echo -e "${YELLOW}  bootstrapping Vundle...${NC}"
+                mkdir -p "$TARGET/.vim/bundle"
+                git clone -q https://github.com/VundleVim/Vundle.vim "$vundle"
+            fi
+            ;;
+    esac
+}
+
+# Install plugins. Runs after stow, because every plugin manager here reads the
+# config file that stow has just linked into place.
+#
+# Failures are reported but do not abort the deployment: a single unreachable
+# plugin repository should not leave the remaining packages unstowed.
+finalize() {
+    case "$1" in
+        tmux)
+            local installer="$TARGET/.tmux/plugins/tpm/bin/install_plugins"
+            if [[ -x "$installer" ]]; then
+                echo -e "${YELLOW}  installing tmux plugins...${NC}"
+                "$installer" >/dev/null 2>&1 \
+                    || echo -e "${YELLOW}  some tmux plugins failed; press prefix+I in tmux to retry${NC}"
+            fi
+            ;;
+        vim)
+            # Vundle's installer drives a real Vim UI, so it hangs forever
+            # without a controlling terminal (piped stdin, CI, a non-tty
+            # harness). Only run it when we genuinely have one.
+            if ! command -v vim &>/dev/null; then
+                :
+            elif [[ -t 0 && -t 1 ]]; then
+                echo -e "${YELLOW}  installing vim plugins (:PluginInstall)...${NC}"
+                vim +PluginInstall +qall \
+                    || echo -e "${YELLOW}  some vim plugins failed; run :PluginInstall in vim to retry${NC}"
+            else
+                echo -e "${YELLOW}  no tty; skipping :PluginInstall${NC}"
+                echo -e "${DIM}    run 'vim +PluginInstall +qall' in a terminal${NC}"
+            fi
+            ;;
+        kickstart.nvim)
+            if command -v nvim &>/dev/null; then
+                echo -e "${YELLOW}  syncing neovim plugins...${NC}"
+                nvim --headless "+Lazy! sync" +qa >/dev/null 2>&1 \
+                    || echo -e "${YELLOW}  neovim plugin sync failed; run :Lazy sync in nvim${NC}"
             fi
             ;;
     esac
@@ -255,13 +304,14 @@ main() {
         echo -e "${BLUE}$pkg${NC}"
         bootstrap "$pkg"
         (cd "$SCRIPT_DIR" && stow "$pkg" -t "$TARGET")
+        finalize "$pkg"
         echo -e "${GREEN}  deployed${NC}"
     done
 
     echo
     echo -e "${GREEN}Done.${NC}"
     if [[ " ${to_deploy[*]} " == *" tmux "* ]]; then
-        echo "  tmux: press prefix+I inside tmux to install plugins"
+        echo "  tmux: run 'tmux source ~/.tmux.conf' in a running session to reload"
     fi
     if [[ " ${to_deploy[*]} " == *" herdr "* ]]; then
         echo "  herdr: run 'herdr server reload-config' to apply without restarting"

@@ -90,18 +90,38 @@ effect `regolith3` self-skips on macOS.
 
 `--all` bypasses this check.
 
-#### `bootstrap`
+#### `bootstrap` (before stow)
 
-Clones external dependencies. Runs only for packages that are about to be
-stowed, and only when the target directory is missing:
+Fetches external sources. Runs only for packages about to be stowed, and only
+when the dependency is missing. This must precede stow so there is something to
+link — `kickstart.nvim` in particular.
 
 | Package | Action |
 |---|---|
 | `tmux` | clone `tmux-plugins/tpm` into `~/.tmux/plugins/tpm` |
 | `oh-my-zsh` | run the upstream oh-my-zsh installer |
 | `kickstart.nvim` | `git submodule update --init` |
+| `vim` | clone `VundleVim/Vundle.vim` into `~/.vim/bundle` |
 
 No `sudo`, no package manager invocation.
+
+#### `finalize` (after stow)
+
+Installs plugins. This must follow stow, because every plugin manager here reads
+the config file stow has just linked into place.
+
+| Package | Action |
+|---|---|
+| `tmux` | `tpm/bin/install_plugins` |
+| `vim` | `vim +PluginInstall +qall` |
+| `kickstart.nvim` | `nvim --headless "+Lazy! sync" +qa` |
+
+Failures are reported but do not abort the run: one unreachable plugin
+repository must not leave the remaining packages unstowed.
+
+Vundle drives a real Vim UI and hangs indefinitely without a controlling
+terminal, so `:PluginInstall` is guarded on `[[ -t 0 && -t 1 ]]` and skipped
+with instructions when stdin or stdout is not a tty.
 
 #### `plan`
 
