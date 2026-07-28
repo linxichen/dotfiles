@@ -94,12 +94,20 @@ set hlsearch                                          " highlight words you are 
 " set list                                              " showing hidden characters tab
 " set listchars=tab:▸\                                  " nice little arrow to show tab
 let base16colorspace=256                              " colors present in 256 colorspace
-set term=screen-256color                               " set 256 color screen to match with tmux
+" NOTE: do not 'set term=' here. It overrides the terminal type the emulator
+" actually reported (herdr/kitty give xterm-256color), which breaks both color
+" and key handling. Trust $TERM instead.
 set t_Co=256                                          " set terminal to have 256 colors
-set background=light                                  " stuff
-colorscheme solarized                            " use the scheme base16-ocean
-" set termguicolors                                     " so the colors are right
+set background=dark                                   " terminals here are dark themed
 let g:solarized_termcolors=256
+
+" NOTE: leave termguicolors OFF. With g:solarized_termcolors=256 this
+" colorscheme only defines cterm colors; its gui colors stay at Vim's defaults
+" (Comment #80a0ff, Normal unset). Enabling termguicolors makes Vim read those
+" empty gui values and solarized disappears entirely.
+" set termguicolors
+
+colorscheme solarized
 set autoread                                          " detect file change
 set clipboard=unnamed                                 " merge vim and system clipboard
 set completeopt+=longest                              " show the longest common word first

@@ -93,6 +93,11 @@ copy_on_select = true
 #   set -g automatic-rename off     - ui.prompt_new_tab_name (default true)
 #                                     already asks for a tab name up front
 
+# Group the agent panel by space rather than by attention queue.
+# Written here by herdr's own settings UI, which edits this file in place --
+# note that it is a symlink into the dotfiles repo, so its edits land there.
+agent_panel_sort = "spaces"
+
 # Desktop notifications via the OS notification service (chosen at onboarding).
 [ui.toast]
 delivery = "system"
