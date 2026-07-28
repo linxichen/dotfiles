@@ -150,6 +150,11 @@ PACKAGES[tmux_debian]="tmux xsel libevent-dev"
 PACKAGES[tmux_arch]="tmux xsel"
 PACKAGES[tmux_macos]="tmux"
 
+# herdr
+# Only packaged in homebrew-core; on debian/arch install via herdr.dev, so no
+# system package list is defined there (an empty list is skipped).
+PACKAGES[herdr_macos]="herdr"
+
 # vim
 PACKAGES[vim_debian]="vim git python3 python3-pip ruby ruby-dev"
 PACKAGES[vim_arch]="vim git python python-pip ruby"
@@ -715,6 +720,7 @@ install_package() {
 show_package_selection() {
     local packages=(
         "tmux" "Terminal multiplexer with plugin manager" OFF
+        "herdr" "Agent multiplexer (tmux-matched keybindings)" OFF
         "oh-my-zsh" "Zsh configuration framework" OFF
         "vim" "Vim editor with plugins" OFF
         "nvim" "Neovim (kickstart.nvim)" OFF
@@ -924,7 +930,8 @@ main() {
     echo "Next steps:"
     echo "1. Restart your shell or run: source ~/.zshrc"
     echo "2. For tmux: Press prefix+I to install plugins"
-    echo "3. For doom_emacs: Run ~/.config/emacs/bin/doom sync"
+    echo "3. For herdr: Run 'herdr server reload-config' (or relaunch) to apply"
+    echo "4. For doom_emacs: Run ~/.config/emacs/bin/doom sync"
     echo ""
     echo "Enjoy your new dotfiles!"
 }

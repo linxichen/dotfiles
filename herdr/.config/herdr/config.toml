@@ -1,0 +1,92 @@
+# herdr configuration
+#
+# Keybindings mirror ~/.tmux.conf (see the tmux package in this repo) so that
+# muscle memory carries over. Anything already matching a herdr default is
+# listed but commented out, to document the correspondence.
+#
+# Validate changes with: herdr config check
+# Apply to a running server with: herdr server reload-config
+
+[theme]
+# tmux uses catppuccin frappe via TPM. herdr ships catppuccin as a built-in;
+# the individual flavours (frappe/macchiato/mocha) are not separately
+# selectable, only catppuccin and catppuccin-latte.
+name = "catppuccin"
+
+[keys]
+# tmux: unbind C-b; set -g prefix C-a
+prefix = "ctrl+a"
+
+# tmux: bind C-a send-prefix
+#   No herdr equivalent -- there is no "send the prefix through to the pane"
+#   action, so C-a C-a does nothing here.
+
+# tmux: bind h/j/k/l select-pane -L/-D/-U/-R  (herdr defaults already match)
+# focus_pane_left = "prefix+h"
+# focus_pane_down = "prefix+j"
+# focus_pane_up = "prefix+k"
+# focus_pane_right = "prefix+l"
+
+# tmux: bind | split-window -h   (side by side)
+split_vertical = "prefix+|"
+
+# tmux: bind - split-window -v   (stacked; herdr default already matches)
+# split_horizontal = "prefix+minus"
+
+# tmux: prefix d = detach-client (herdr defaults this to prefix+q)
+# Note: prefix+shift+d remains close_workspace, so mind the shift.
+detach = "prefix+d"
+
+# tmux: prefix , = rename-window (herdr defaults this to prefix+shift+t)
+rename_tab = "prefix+comma"
+
+# tmux: prefix & = kill-window (herdr defaults this to prefix+shift+x)
+close_tab = "prefix+&"
+
+# These tmux bindings are herdr defaults already -- kept here as a map:
+# new_tab = "prefix+c"          # tmux: prefix c = new-window
+# next_tab = "prefix+n"         # tmux: prefix n = next-window
+# previous_tab = "prefix+p"     # tmux: prefix p = previous-window
+# switch_tab = "prefix+1..9"    # tmux: prefix 1..9 = select-window
+# close_pane = "prefix+x"       # tmux: prefix x = kill-pane
+# zoom = "prefix+z"             # tmux: prefix z = resize-pane -Z
+# help = "prefix+?"             # tmux: prefix ? = list-keys
+
+# herdr-only actions (no tmux counterpart) are left at their defaults:
+# workspace_picker (prefix+w), goto (prefix+g), toggle_sidebar (prefix+b),
+# resize_mode (prefix+r), settings (prefix+s), new_workspace (prefix+shift+n),
+# new_worktree (prefix+shift+g), edit_scrollback (prefix+e), etc.
+
+# tmux: set-window-option -g mode-keys vi
+#   herdr's navigate mode is already hjkl by default:
+# navigate_pane_left = "h"
+# navigate_pane_down = "j"
+# navigate_pane_up = "k"
+# navigate_pane_right = "l"
+
+[ui]
+# tmux: set -g mouse on
+mouse_capture = true
+copy_on_select = true
+
+# No herdr equivalents for these tmux settings:
+#   set -sg escape-time 1           - herdr has no prefix timeout knob
+#   set -g renumber-windows on      - tabs are not index-managed the same way
+#   setw -g aggressive-resize on    - herdr sizes panes per client already
+#   setw -g window-status-*-format  - the tab bar is not format-string driven;
+#                                     the closest knob is [ui.sidebar.*] rows
+#   set -g automatic-rename off     - ui.prompt_new_tab_name (default true)
+#                                     already asks for a tab name up front
+
+# Desktop notifications via the OS notification service (chosen at onboarding).
+[ui.toast]
+delivery = "system"
+
+[experimental]
+# Keep recent pane screen history across full server restarts.
+pane_history = true
+
+[advanced]
+# tmux: set -g history-limit 30000 (lines). herdr caps scrollback by bytes;
+# the 10 MB default is comparable or larger, so it is left alone.
+# scrollback_limit_bytes = 10000000

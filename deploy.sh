@@ -45,10 +45,12 @@ print_help() {
 ${BLUE}Usage: $0 <package>${NC}
 ${YELLOW}Available packages:${NC}
   ${GREEN}tmux${NC}       - Deploy tmux configuration with plugin manager
+  ${GREEN}herdr${NC}      - Deploy herdr configuration (tmux-matched keybindings)
   ${GREEN}oh-my-zsh${NC}  - Deploy oh-my-zsh configuration
 
 ${YELLOW}Examples:${NC}
   $0 tmux
+  $0 herdr
   $0 oh-my-zsh
 
 ${YELLOW}Note:${NC} This script will install required dependencies automatically
@@ -163,6 +165,32 @@ case "$1" in
         fi
         ;;
         
+    "herdr")
+        echo -e "${BLUE}Starting herdr deployment...${NC}"
+
+        if ! command -v herdr &>/dev/null; then
+            echo -e "${YELLOW}Warning: herdr is not installed; config will be staged anyway${NC}" >&2
+        fi
+
+        # Stow herdr configuration (~/.config/herdr/config.toml)
+        if stow herdr -t "$HOME_DIR"; then
+            echo -e "${GREEN}herdr configuration deployed successfully${NC}"
+        else
+            echo -e "${RED}Failed to deploy herdr configuration${NC}" >&2
+            exit 1
+        fi
+
+        # Validate and, if a server is running, apply without a restart
+        if command -v herdr &>/dev/null; then
+            herdr config check || true
+            if herdr server reload-config &>/dev/null; then
+                echo -e "${GREEN}Reloaded config in the running herdr server${NC}"
+            else
+                echo -e "${YELLOW}No running herdr server; config applies on next launch${NC}"
+            fi
+        fi
+        ;;
+
     "oh-my-zsh")
         echo -e "${BLUE}Starting oh-my-zsh deployment...${NC}"
         
