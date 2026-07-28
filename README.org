@@ -1,51 +1,86 @@
-#+Title: Welcome
+#+Title: Dotfiles
 
-* Quick Start (Interactive Installation)
+* Quick start
 
-The easiest way to get started is using the interactive deployment script. It will guide you through selecting which packages to install and handle all dependencies automatically.
-
-#+BEGIN_SRC bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/linxichen/dotfiles/master/interactive-deploy.sh)"
-#+END_SRC
-
-Or after cloning the repository:
+Clone with submodules, then deploy:
 
 #+BEGIN_SRC bash
-./interactive-deploy.sh
+git clone --recurse-submodules ssh://git@github.com/linxichen/dotfiles.git
+cd dotfiles
+./deploy.sh
 #+END_SRC
 
-The interactive script supports:
-- Ubuntu/Debian Linux
-- Arch Linux
-- macOS (with Homebrew)
+=deploy.sh= scans the repository, works out what is deployable on this machine,
+shows you the plan, and applies it after a single confirmation.
 
-It will automatically install system packages, language servers, clone external repositories (TPM, oh-my-zsh, etc.), and deploy configurations using GNU Stow.
+Configuration only — it does not install system packages. Install the tools
+themselves first (=brew install tmux herdr stow=, etc.); anything not on your
+=PATH= is simply skipped.
 
-* How to clone properly
-I included my kickstart.nvim fork as a subpackge thus it needed to be clone as well...
+* Usage
+
 #+BEGIN_SRC bash
-git clone --recurse-submodules https://github.com/linxichen/dotfiles.git
-git clone --recurse-submodules ssh://git@github.com:linxichen/dotfiles.git
+./deploy.sh                 # plan everything, confirm, apply
+./deploy.sh tmux herdr      # only these packages
+./deploy.sh --dry-run       # show the plan and stop
+./deploy.sh --all           # include packages whose tool is not installed
+./deploy.sh --help
 #+END_SRC
 
-* How to deploy dotfiles (Manual Method)
+Example plan:
 
-First make sure you cd to the root directory of this repo.
+#+BEGIN_EXAMPLE
+Planning deployment into /Users/linxi
 
-Make sure deploy.sh is executable
+  aider              skipped (aider not on PATH)
+  herdr              already linked
+  oh-my-zsh          CONFLICT
+    blocked by: .zshrc
+  tmux               already linked
+  vim                will link
+#+END_EXAMPLE
+
+Existing files are never overwritten. A =CONFLICT= means a real file is sitting
+where a symlink should go; move it aside and re-run.
+
+* How packages work
+
+A top-level directory is a stow package if it contains at least one
+dot-prefixed entry. Everything inside is symlinked into =~= preserving
+structure, so =tmux/.tmux.conf= becomes =~/.tmux.conf= and
+=herdr/.config/herdr/config.toml= becomes =~/.config/herdr/config.toml=.
+
+Adding a package means creating a correctly-shaped directory. Nothing needs to
+be registered anywhere.
+
+A package is deployed only when the tool it configures is on =PATH=. Names
+usually match; the exceptions are =oh-my-zsh= → =zsh=, =kickstart.nvim= →
+=nvim=, and =regolith3= → =i3=. Use =--all= to bypass the check.
+
+Files that live in a package but should not be deployed go in that package's
+=.stow-local-ignore= (see =vim/=, which keeps several unused vimrc variants).
+
+Directories without dot-prefixed entries — =install/=, =skills/=, =noip/=,
+=emacs/=, =macprofile/=, and so on — are not packages and are left alone.
+
+* Managing deployed packages
+
 #+BEGIN_SRC bash
-chmod +x ./deploy.sh
+stow tmux -D -t ~    # remove symlinks
+stow tmux -R -t ~    # restow (after adding files to a package)
 #+END_SRC
 
-Call deploy.sh with name of package
-#+BEGIN_SRC bash
-./deploy.sh tmux
-#+END_SRC
+* Bootstrapping
 
-This command initialize properly (e.g. clone tpm) and use stow to symlink everything under package directory to ~. That is, tmux/.tmux.conf will be sym linked to ~/.tmux.conf, etc.
+Some packages need an external repository, cloned automatically on deploy when
+missing:
 
-To delete or re-stow the package, do the following
-#+BEGIN_SRC bash
-stow nvim -D -t ~
-stow nvim -R -t ~
-#+END_SRC
+| Package        | Bootstrap                        |
+|----------------+----------------------------------|
+| tmux           | tmux plugin manager (TPM)        |
+| oh-my-zsh      | oh-my-zsh installer              |
+| kickstart.nvim | =git submodule update --init=    |
+
+After deploying tmux, press =prefix+I= inside tmux to install plugins.
+After deploying herdr, run =herdr server reload-config= to apply without
+restarting.
