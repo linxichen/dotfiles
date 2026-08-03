@@ -1,55 +1,212 @@
 #+Title: Dotfiles
 
-GNU Stow-managed dotfiles. Each top-level directory is a stow package — stow it and files symlink into ~.
+* Quick start
 
-* AI Agent Deployment
-
-This repo includes ~AGENTS.md~ at the root — compatible with Claude Code, Codex, Cursor, and any tool that reads agent manifests. Point your AI agent here and ask it to deploy what you need.
-
-* Quick Start (Manual)
-
-First install GNU Stow:
+Clone, then deploy:
 
 #+BEGIN_SRC bash
-# macOS
-brew install stow
-# Debian/Ubuntu
-sudo apt install -y stow
-# Arch
-sudo pacman -S stow
+git clone ssh://git@github.com/linxichen/dotfiles.git
+cd dotfiles
+./deploy.sh
 #+END_SRC
 
-Then clone and stow what you want:
+=deploy.sh= scans the repository, works out what is deployable on this machine,
+shows you the plan, and applies it after a single confirmation.
+
+Configuration only — it does not install system packages. Install the tools
+themselves first (=brew install tmux herdr stow=, etc.); anything not on your
+=PATH= is simply skipped.
+
+* Usage
 
 #+BEGIN_SRC bash
-git clone https://github.com/linxichen/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-stow tmux -t ~       # deploy tmux config
-stow oh-my-zsh -t ~  # deploy zsh config
+./deploy.sh                 # plan everything, confirm, apply
+./deploy.sh tmux herdr      # only these packages
+./deploy.sh --dry-run       # show the plan and stop
+./deploy.sh --all           # include packages whose tool is not installed
+./deploy.sh --help
 #+END_SRC
 
-Unstow or restow:
+Example plan:
+
+#+BEGIN_EXAMPLE
+Planning deployment into /Users/linxi
+
+  aider              skipped (aider not on PATH)
+  herdr              already linked
+  oh-my-zsh          CONFLICT
+    blocked by: .zshrc
+  tmux               already linked
+  vim                will link
+#+END_EXAMPLE
+
+Existing files are never overwritten. A =CONFLICT= means a real file is sitting
+where a symlink should go; move it aside and re-run.
+
+* How packages work
+
+A top-level directory is a stow package if it contains at least one
+dot-prefixed entry. Everything inside is symlinked into =~= preserving
+structure, so =tmux/.tmux.conf= becomes =~/.tmux.conf= and
+=herdr/.config/herdr/config.toml= becomes =~/.config/herdr/config.toml=.
+
+Adding a package means creating a correctly-shaped directory. Nothing needs to
+be registered anywhere.
+
+A package is deployed only when the tool it configures is actually present.
+Usually that means a command of the same name on =PATH=; the exceptions are:
+
+| Package   | Probe                    | Why                                    |
+|-----------+--------------------------+----------------------------------------|
+| regolith3 | =i3= on =PATH=           | different name                         |
+| oh-my-zsh | =~/.oh-my-zsh= directory | =zsh= is always present, even unused   |
+
+The oh-my-zsh case matters: probing for =zsh= would succeed on any macOS box and
+deploy an oh-my-zsh =.zshrc= over a different shell setup. Probe for the
+framework itself.
+
+Use =--all= to bypass the check entirely.
+
+Files that live in a package but should not be deployed go in that package's
+=.stow-local-ignore= (see =vim/=, which keeps several unused vimrc variants).
+
+Directories without dot-prefixed entries — =install/=, =skills/=, =noip/=,
+=emacs/=, =macprofile/=, and so on — are not packages and are left alone.
+
+* Managing deployed packages
 
 #+BEGIN_SRC bash
-stow nvim -D -t ~    # remove
-stow nvim -R -t ~    # restow
+stow tmux -D -t ~    # remove symlinks
+stow tmux -R -t ~    # restow (after adding files to a package)
 #+END_SRC
 
-* Per-Package Setup
+* Deploying by hand (instructions for an agent)
 
-Some packages need external repos cloned or plugins installed after stowing. See ~AGENTS.md~ for the full manifest, or:
+Use this when =deploy.sh= is unavailable or unsuitable — deploying a single
+package, a machine without the repo checked out the usual way, or debugging why
+=deploy.sh= skipped something. The rules below are the ones =deploy.sh=
+enforces; follow them and the result is identical.
 
-| Package     | Extra Setup |
-|-------------+-------------|
-| tmux        | Clone TPM: ~git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm~ then run ~install_plugins~ |
-| oh-my-zsh   | Install oh-my-zsh first |
-| vim         | Clone Vundle, run ~vim +PluginInstall +qall~ |
-| nvim        | None — LazyVim self-bootstraps on first launch |
-| spacemacs   | Clone spacemacs to ~~/.emacs.d~ |
-| doom_emacs  | Clone doom to ~~/.config/emacs~, run ~doom install~ |
+** 1. Find the packages
 
-* Legacy Scripts
+A directory is a stow package if it holds at least one dot-prefixed entry:
 
-~skills/deploy.sh~ is a convenience wrapper around stow for humans. Not needed for agent deployment.
+#+BEGIN_SRC bash
+for d in */; do
+    d="${d%/}"
+    if [ -n "$(find "$d" -maxdepth 1 -name '.*' \
+                    ! -name '.' ! -name '.stow-local-ignore' -print -quit)" ]; then
+        echo "$d"
+    fi
+done
+#+END_SRC
 
+(Deliberately =find= rather than =compgen -G=: =compgen= is a bash builtin, and
+in zsh it resolves to something else that always succeeds, which silently
+reports every directory as a package.)
 
+Directories with no dot-prefixed entries (=install/=, =skills/=, =noip/=,
+=emacs/=, =macprofile/=, =spacemacs/=, =i3/=, =doom_emacs/=, =w3m/=, =docs/=)
+are *not* packages. Never stow them: stow would copy their filenames verbatim
+into =~=, producing junk like =~/dotvimrc= or =~/openvpn_ubuntu.sh=.
+
+** 2. Check the tool is actually installed
+
+Skip a package whose tool is absent, so a machine does not accumulate configs
+for software it does not have. Probe a command on =PATH= for most packages;
+=regolith3= needs =i3=, and =oh-my-zsh= needs the =~/.oh-my-zsh= *directory*
+rather than =zsh= (see "How packages work" above for why).
+
+** 3. Plan before touching anything
+
+Always simulate first, and read the exit status:
+
+#+BEGIN_SRC bash
+stow -n -v <package> -t ~ ; echo "exit=$?"
+#+END_SRC
+
+| Result                       | Meaning                       |
+|------------------------------+-------------------------------|
+| exit 1, "would cause conflicts" | a real file is in the way  |
+| exit 0, =LINK:= lines shown  | will create new symlinks      |
+| exit 0, no =LINK:= lines     | already stowed, or *empty*    |
+
+The last row is ambiguous and has caused a real bug: a package containing no
+files at all also produces no =LINK:= lines. Check for content separately
+before concluding a package is already deployed:
+
+#+BEGIN_SRC bash
+find <package> -type f ! -name .stow-local-ignore -print -quit
+#+END_SRC
+
+** 4. Never overwrite
+
+On a conflict, *stop and report it*. Do not pass =--adopt=, do not delete the
+blocking file, and do not overwrite it. Those files are live user configuration
+— =~/.zshrc= and =~/.config/nvim= on this machine are real files unrelated to
+this repo. Move the file aside only after the user agrees:
+
+#+BEGIN_SRC bash
+mv ~/.zshrc ~/.zshrc.bak && stow oh-my-zsh -t ~
+#+END_SRC
+
+** 5. Order matters around plugin managers
+
+Fetch external sources *before* stow, install plugins *after* — plugin managers
+read the config file that stow links into place, so installing first silently
+does nothing. See "Bootstrapping" above for the per-package commands.
+
+=vim +PluginInstall +qall= hangs forever without a controlling terminal. If the
+agent's shell has no tty, skip it and tell the user to run it themselves, or
+wrap it: =script -q /dev/null vim +PluginInstall +qall=.
+
+** 6. Verify
+
+#+BEGIN_SRC bash
+ls -l ~/.tmux.conf          # should be a symlink into this repo
+readlink ~/.config/herdr/config.toml
+#+END_SRC
+
+Then run the test suite, which checks classification, skipping, conflict
+handling, and idempotence against a throwaway target:
+
+#+BEGIN_SRC bash
+./test-deploy.sh
+#+END_SRC
+
+** Caveat: herdr edits its own config
+
+=herdr='s settings UI writes to =~/.config/herdr/config.toml=, which is a
+symlink into this repo. Changing settings in the herdr UI therefore dirties the
+working tree. Check =git status= before assuming a diff there is yours.
+
+* Bootstrapping
+
+Deployment runs in two phases around stow.
+
+*Before* stow, missing external sources are fetched:
+
+| Package   | Fetched                   |
+|-----------+---------------------------|
+| tmux      | tmux plugin manager (TPM) |
+| oh-my-zsh | oh-my-zsh installer       |
+| vim       | Vundle.vim                |
+
+*After* stow, plugins are installed — this has to come second, because every
+plugin manager reads the config file stow has just linked into place:
+
+| Package | Installs plugins with     |
+|---------+---------------------------|
+| tmux    | =tpm/bin/install_plugins= |
+| vim     | =:PluginInstall=          |
+
+Plugin installation failures are reported but do not abort the deployment; one
+unreachable plugin repository will not leave the remaining packages unstowed.
+
+Vundle drives a real Vim UI and hangs without a controlling terminal, so
+=:PluginInstall= is skipped when =deploy.sh= has no tty (piped input, CI). Run
+=vim +PluginInstall +qall= in a terminal afterwards, or re-run =deploy.sh=
+interactively.
+
+After deploying herdr, run =herdr server reload-config= to apply without
+restarting.

@@ -1,0 +1,6 @@
+# Variants and helper scripts that are not deployed to ~.
+# Kept in the repo for reference; .vimrc and .gvimrc are the deployed files.
+dotvimrc_k40
+dotvimrc_k40~
+dotvimrc_python
+Skim_SyncTex\.sh
