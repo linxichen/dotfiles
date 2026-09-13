@@ -1,3 +1,4 @@
+onboarding = false
 # herdr configuration
 #
 # Keybindings mirror ~/.tmux.conf (see the tmux package in this repo) so that
@@ -93,14 +94,20 @@ copy_on_select = true
 #   set -g automatic-rename off     - ui.prompt_new_tab_name (default true)
 #                                     already asks for a tab name up front
 
+# tmux: new-window with no -n, i.e. let the tab name just be a number.
+# false skips the prompt on prefix+c and labels the new tab with the next free
+# number ("1", "2", ...). Rename after the fact with prefix+comma.
+prompt_new_tab_name = false
+
 # Group the agent panel by space rather than by attention queue.
 # Written here by herdr's own settings UI, which edits this file in place --
 # note that it is a symlink into the dotfiles repo, so its edits land there.
 agent_panel_sort = "spaces"
 
 # Desktop notifications via the OS notification service (chosen at onboarding).
+show_agent_labels_on_pane_borders = true
 [ui.toast]
-delivery = "system"
+delivery = "terminal"
 
 [experimental]
 # Keep recent pane screen history across full server restarts.
