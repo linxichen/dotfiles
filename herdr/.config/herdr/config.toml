@@ -106,6 +106,7 @@ agent_panel_sort = "spaces"
 
 # Desktop notifications via the OS notification service (chosen at onboarding).
 show_agent_labels_on_pane_borders = true
+status_indicators = "symbols"
 [ui.toast]
 delivery = "terminal"
 

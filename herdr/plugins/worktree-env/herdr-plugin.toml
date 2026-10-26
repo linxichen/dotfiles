@@ -1,0 +1,18 @@
+id = "worktree-env"
+name = "Worktree .env"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Materialize .env from .env.tpl (op inject) at the root of new worktrees."
+platforms = ["macos"]
+
+# Handler reads the worktree path from HERDR_PLUGIN_EVENT_JSON. It skips repos
+# without a .env.tpl and never overwrites an existing .env, so firing on both
+# events is safe.
+[[events]]
+on = "worktree.created"
+command = ["bash", "inject-env.sh"]
+
+# Opening an existing worktree that has no .env yet.
+[[events]]
+on = "worktree.opened"
+command = ["bash", "inject-env.sh"]
