@@ -184,8 +184,17 @@ Alternatively, inside Neovim run `:checkhealth`.
 |---|---|---|---|
 | **w3m** | `keymap` → `~/.w3m/keymap` | `w3m` | Stow only |
 | **noip** | `noip.sh` | `build-essential` (build deps for No-IP DUC) | Stow only — script, not a service |
+
+### AI agents (`./deploy.sh ai`)
+
+Deploy all four with `./deploy.sh ai`. `claude`, `codex` and `orca` must be stowed with `--no-folding` (deploy.sh does this): their target directories are live application state, and folding would link them into this public repo.
+
+| Package | Files | System Deps | External Setup |
+|---|---|---|---|
 | **aider** | `.aider.conf.yml` | `aider` (pip/brew) | Stow only |
-| **orca** | `.agents/orca-policy.md` (personal Orca orchestration policy, read by coding agents via `~/.claude/CLAUDE.md`) | Orca app (`orca` CLI on macOS, `orca-ide` on Linux) | Stow only |
+| **claude** | `.claude/CLAUDE.md` (global Claude Code instructions) | `claude` (Claude Code) | `stow --no-folding claude -t ~` |
+| **codex** | `.codex/AGENTS.md` (global Codex instructions) | `codex` | `stow --no-folding codex -t ~` |
+| **orca** | `.agents/orca-policy.md` (personal Orca orchestration policy, which both files above point to) | Orca app (`orca` CLI on macOS, `orca-ide` on Linux) | `stow --no-folding orca -t ~` |
 
 ## Platform Detection (for agents)
 

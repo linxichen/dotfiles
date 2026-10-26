@@ -22,6 +22,7 @@ themselves first (=brew install tmux herdr stow=, etc.); anything not on your
 #+BEGIN_SRC bash
 ./deploy.sh                 # plan everything, confirm, apply
 ./deploy.sh tmux herdr      # only these packages
+./deploy.sh ai              # only a bundle: aider claude codex orca
 ./deploy.sh --dry-run       # show the plan and stop
 ./deploy.sh --all           # include packages whose tool is not installed
 ./deploy.sh --help
@@ -67,6 +68,18 @@ deploy an oh-my-zsh =.zshrc= over a different shell setup. Probe for the
 framework itself.
 
 Use =--all= to bypass the check entirely.
+
+A bundle names a group of related packages so a new machine can deploy them in
+one word. =ai= expands to =aider claude codex orca=. Each member is still
+probed on its own, so a machine without =codex= gets no =~/.codex=. Bundles
+live in =expand_bundle= in =deploy.sh=.
+
+The =claude=, =codex= and =orca= packages link into directories their
+applications write to (=~/.claude=, =~/.codex=, =~/.agents=), so they are stowed
+with =--no-folding=: if the directory does not exist yet, stow creates it rather
+than linking the whole directory into this repo. Folding there would put
+credentials and session history into the working tree of a public repo. Stow
+such packages by hand with the same flag: =stow --no-folding claude -t ~=.
 
 Files that live in a package but should not be deployed go in that package's
 =.stow-local-ignore= (see =vim/=, which keeps several unused vimrc variants).

@@ -16,7 +16,7 @@ trap 'rm -rf "$WORK"' EXIT
 echo "== 1. classification =="
 fresh
 OUT="$("$REPO/deploy.sh" --dry-run --all --target "$WORK" 2>&1)"
-for p in aider herdr kitty oh-my-zsh orca regolith3 tmux wezterm vim; do
+for p in aider claude codex herdr kitty oh-my-zsh orca regolith3 tmux wezterm vim; do
     if grep -qE "^  $p +" <<<"$OUT"; then ok "classified in: $p"; else bad "classified in: $p"; fi
 done
 for p in install skills noip ubuntu_profile_d emacs macprofile spacemacs i3 doom_emacs w3m docs; do
@@ -113,6 +113,27 @@ grep -qE "^  zz_test_empty_pkg +.*empty" <<<"$OUT" && ok "empty package reported
     || bad "empty package misreported: $(grep zz_test <<<"$OUT" || echo 'not listed at all')"
 grep -qE "^  zz_test_empty_pkg +.*already linked" <<<"$OUT" \
     && bad "empty package misreported as already linked" || ok "not called already-linked"
+
+echo "== 10. the ai bundle names its members, and only them =="
+fresh
+OUT="$("$REPO/deploy.sh" --dry-run --all --target "$WORK" ai 2>&1)"
+for p in aider claude codex orca; do
+    grep -qE "^  $p +" <<<"$OUT" && ok "ai includes $p" || bad "ai should include $p"
+done
+grep -qE "^  tmux +" <<<"$OUT" && bad "ai should not include tmux" || ok "ai excludes tmux"
+
+echo "== 11. agent state directories are created, never linked into the repo =="
+# On a fresh machine ~/.claude does not exist. A folding stow would make it a
+# symlink into this repo, and Claude Code would write credentials into the tree.
+fresh
+yes | "$REPO/deploy.sh" --all --target "$WORK" claude codex orca >/dev/null 2>&1
+for d in .claude .codex .agents; do
+    [ -d "$WORK/$d" ] && [ ! -L "$WORK/$d" ] && ok "$d is a real directory" \
+        || bad "$d should be a real directory, not a symlink"
+done
+for f in .claude/CLAUDE.md .codex/AGENTS.md .agents/orca-policy.md; do
+    [ -L "$WORK/$f" ] && ok "$f linked" || bad "$f not linked"
+done
 
 echo
 echo "passed: $PASS  failed: $FAIL"

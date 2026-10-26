@@ -9,6 +9,7 @@
 #
 #   ./deploy.sh                 plan everything, confirm once, apply
 #   ./deploy.sh tmux herdr      same, restricted to named packages
+#   ./deploy.sh ai              same, restricted to a bundle (see expand_bundle)
 #   ./deploy.sh --dry-run       plan and exit
 #   ./deploy.sh --all           deploy even if the tool is not installed
 #
@@ -30,7 +31,10 @@ fi
 
 usage() {
     cat <<EOF
-Usage: $0 [options] [package...]
+Usage: $0 [options] [package|bundle...]
+
+Bundles:
+  ai               aider claude codex orca (AI agent configuration)
 
 Options:
   --dry-run        Show the plan and exit without changing anything
@@ -56,6 +60,25 @@ is_stow_package() {
         esac
     done
     return 1
+}
+
+# Named bundles, so a new machine can deploy related packages in one word.
+# Members are still probed one by one: a bundle saves typing, nothing more.
+expand_bundle() {
+    case "$1" in
+        ai) echo "aider claude codex orca" ;;
+        *)  echo "$1" ;;
+    esac
+}
+
+# Packages that link into an application's own state directory must not fold.
+# Where ~/.claude, ~/.codex or ~/.agents does not exist yet, stow would link the
+# whole directory into this repo, and the application would then write its
+# credentials, history and installed skills into the working tree.
+stow_flags() {
+    case "$1" in
+        claude|codex|orca) echo "--no-folding" ;;
+    esac
 }
 
 # How to tell whether the tool a package configures is actually in use here.
@@ -180,7 +203,7 @@ plan_package() {
     fi
 
     set +e
-    out="$(cd "$SCRIPT_DIR" && stow -n -v "$pkg" -t "$TARGET" 2>&1)"
+    out="$(cd "$SCRIPT_DIR" && stow -n -v $(stow_flags "$pkg") "$pkg" -t "$TARGET" 2>&1)"
     status=$?
     set -e
 
@@ -196,7 +219,7 @@ plan_package() {
 conflict_detail() {
     local pkg="$1"
     set +e
-    (cd "$SCRIPT_DIR" && stow -n -v "$pkg" -t "$TARGET" 2>&1) \
+    (cd "$SCRIPT_DIR" && stow -n -v $(stow_flags "$pkg") "$pkg" -t "$TARGET" 2>&1) \
         | grep "cannot stow" \
         | sed 's/.*over existing target /    blocked by: /; s/ since .*//'
     set -e
@@ -224,20 +247,21 @@ main() {
     # Naming a non-package explicitly is an error; auto-detection just skips.
     local candidates=()
     if [[ "$explicit" == true ]]; then
-        local pkg
-        for pkg in "${requested[@]}"; do
-            pkg="${pkg%/}"
-            if [[ ! -d "$SCRIPT_DIR/$pkg" ]]; then
-                echo -e "${RED}No such package directory: $pkg${NC}" >&2
-                exit 2
-            fi
-            if ! is_stow_package "$pkg"; then
-                echo -e "${RED}Not a stow package: $pkg${NC}" >&2
-                echo "It holds no dot-prefixed entries, so stow would copy its" >&2
-                echo "filenames verbatim into $TARGET." >&2
-                exit 2
-            fi
-            candidates+=("$pkg")
+        local name pkg
+        for name in "${requested[@]}"; do
+            for pkg in $(expand_bundle "${name%/}"); do
+                if [[ ! -d "$SCRIPT_DIR/$pkg" ]]; then
+                    echo -e "${RED}No such package directory: $pkg${NC}" >&2
+                    exit 2
+                fi
+                if ! is_stow_package "$pkg"; then
+                    echo -e "${RED}Not a stow package: $pkg${NC}" >&2
+                    echo "It holds no dot-prefixed entries, so stow would copy its" >&2
+                    echo "filenames verbatim into $TARGET." >&2
+                    exit 2
+                fi
+                candidates+=("$pkg")
+            done
         done
     else
         local dir
@@ -318,7 +342,7 @@ main() {
     for pkg in "${to_deploy[@]}"; do
         echo -e "${BLUE}$pkg${NC}"
         bootstrap "$pkg"
-        (cd "$SCRIPT_DIR" && stow "$pkg" -t "$TARGET")
+        (cd "$SCRIPT_DIR" && stow $(stow_flags "$pkg") "$pkg" -t "$TARGET")
         finalize "$pkg"
         echo -e "${GREEN}  deployed${NC}"
     done
