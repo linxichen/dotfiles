@@ -16,7 +16,7 @@ trap 'rm -rf "$WORK"' EXIT
 echo "== 1. classification =="
 fresh
 OUT="$("$REPO/deploy.sh" --dry-run --all --target "$WORK" 2>&1)"
-for p in aider herdr kitty oh-my-zsh regolith3 tmux wezterm vim; do
+for p in aider herdr kitty oh-my-zsh orca regolith3 tmux wezterm vim; do
     if grep -qE "^  $p +" <<<"$OUT"; then ok "classified in: $p"; else bad "classified in: $p"; fi
 done
 for p in install skills noip ubuntu_profile_d emacs macprofile spacemacs i3 doom_emacs w3m docs; do
@@ -42,6 +42,18 @@ grep -qE "^  oh-my-zsh +.*skipped \(.*\.oh-my-zsh not present\)" <<<"$OUT" \
     || bad "oh-my-zsh should be skipped (got: $(grep oh-my-zsh <<<"$OUT"))"
 command -v zsh >/dev/null && ok "…and zsh IS on PATH, so a command probe would have wrongly deployed it" \
     || echo "  SKIP: zsh not on PATH, cannot demonstrate the false positive"
+
+# On Linux `orca` is the GNOME screen reader; the Orca IDE's CLI is `orca-ide`.
+# Fake a Linux host with only the screen reader installed: orca must be skipped.
+SHIM="$(mktemp -d)"
+printf '#!/bin/sh\necho Linux\n' > "$SHIM/uname"
+printf '#!/bin/sh\nexit 0\n' > "$SHIM/orca"
+chmod +x "$SHIM/uname" "$SHIM/orca"
+OUT="$(PATH="$SHIM:$PATH" "$REPO/deploy.sh" --dry-run --target "$WORK" orca 2>&1)"
+rm -rf "$SHIM"
+grep -qE "^  orca +.*skipped \(orca-ide not on PATH\)" <<<"$OUT" \
+    && ok "orca on Linux probes orca-ide, not the screen reader" \
+    || bad "orca should be skipped on Linux without orca-ide (got: $(grep orca <<<"$OUT"))"
 
 echo "== 3. conflict is reported, file untouched, exit non-zero =="
 fresh

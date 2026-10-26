@@ -60,6 +60,7 @@ Usually that means a command of the same name on =PATH=; the exceptions are:
 |-----------+--------------------------+----------------------------------------|
 | regolith3 | =i3= on =PATH=           | different name                         |
 | oh-my-zsh | =~/.oh-my-zsh= directory | =zsh= is always present, even unused   |
+| orca      | =orca-ide= on Linux      | Linux =orca= is the GNOME screen reader |
 
 The oh-my-zsh case matters: probing for =zsh= would succeed on any macOS box and
 deploy an oh-my-zsh =.zshrc= over a different shell setup. Probe for the
@@ -114,8 +115,9 @@ into =~=, producing junk like =~/dotvimrc= or =~/openvpn_ubuntu.sh=.
 
 Skip a package whose tool is absent, so a machine does not accumulate configs
 for software it does not have. Probe a command on =PATH= for most packages;
-=regolith3= needs =i3=, and =oh-my-zsh= needs the =~/.oh-my-zsh= *directory*
-rather than =zsh= (see "How packages work" above for why).
+=regolith3= needs =i3=, =oh-my-zsh= needs the =~/.oh-my-zsh= *directory*
+rather than =zsh=, and =orca= needs =orca-ide= on Linux, where =orca= is the
+GNOME screen reader (see "How packages work" above for why).
 
 ** 3. Plan before touching anything
 

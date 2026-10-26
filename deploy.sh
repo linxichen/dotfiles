@@ -65,10 +65,16 @@ is_stow_package() {
 # shell framework installed as a directory, and probing for `zsh` would always
 # succeed on macOS and happily deploy an oh-my-zsh .zshrc over a different
 # shell setup (starship, say). Probe for the framework itself.
+#
+# orca is the Orca agent IDE, whose CLI is `orca` on macOS but `orca-ide` on
+# Linux, where `orca` is the GNOME screen reader and would match on any desktop.
 install_probe() {
     case "$1" in
         oh-my-zsh) echo "dir $TARGET/.oh-my-zsh" ;;
         regolith3) echo "cmd i3" ;;
+        orca)
+            if [[ "$(uname -s)" == Linux ]]; then echo "cmd orca-ide"
+            else echo "cmd orca"; fi ;;
         *)         echo "cmd $1" ;;
     esac
 }

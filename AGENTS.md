@@ -185,6 +185,7 @@ Alternatively, inside Neovim run `:checkhealth`.
 | **w3m** | `keymap` → `~/.w3m/keymap` | `w3m` | Stow only |
 | **noip** | `noip.sh` | `build-essential` (build deps for No-IP DUC) | Stow only — script, not a service |
 | **aider** | `.aider.conf.yml` | `aider` (pip/brew) | Stow only |
+| **orca** | `.agents/orca-policy.md` (personal Orca orchestration policy, read by coding agents via `~/.claude/CLAUDE.md`) | Orca app (`orca` CLI on macOS, `orca-ide` on Linux) | Stow only |
 
 ## Platform Detection (for agents)
 
