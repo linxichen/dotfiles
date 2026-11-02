@@ -63,16 +63,71 @@ evidence for review, not acceptance.
 
 ## Routing work to models
 
-- Flagship models do the heavy work as workers: planning, architecture and
-  design, debugging, independent review and hard multi-step mathematical
-  problem-solving. Run them at high effort or above.
-- Workhorse models do implementation, routine research and edits, usually
-  against a plan or design a flagship produced.
-- Final independent review uses a flagship model at xhigh effort and checks the
-  work against both the repository standards and the originating issue or
-  specification. The reviewer is a fresh session that did not author the work
-  and receives only the spec, the standards and the change. When a flagship
-  wrote the work, prefer the other flagship's model family as reviewer.
+Models come in three tiers, listed under "Model and harness designations":
+frontier, flagship and workhorse. Each tier has two model families (Claude and
+GPT), and wherever this section asks for independence, it means a fresh session
+and, where available, the other family.
+
+### The lifecycle of a spec
+
+1. **Spec, verification and breakdown — frontier, xhigh.** A frontier model
+   writes, as one package:
+   - the spec: the design, the decisions it rests on, and observable
+     acceptance criteria for the whole change;
+   - the verification standards: for each criterion, the evidence that proves
+     it (a test, a command and its expected output, a data check), and the
+     quality gates every ticket must pass;
+   - the acceptance tests: executable and failing before implementation,
+     except where a criterion cannot be automated, in which case the
+     standards spell out the manual check;
+   - the tickets: dependency-ordered and self-contained, each naming the
+     acceptance tests and standards it must satisfy.
+
+   The package is an owner decision gate: the coordinator presents it to the
+   user before dispatching tickets, unless the user has already approved the
+   design.
+2. **Implementation — workhorse.** A workhorse implements each ticket against
+   its ticket spec until its named acceptance tests pass. It never weakens,
+   skips or rewrites an acceptance test or standard; one it believes is wrong
+   goes to the coordinator as an escalation and from there to a frontier model.
+3. **Advice — flagship, high or above.** When a workhorse asks a question,
+   escalates, stalls, or fails a review with a non-trivial finding, the
+   coordinator dispatches a flagship advisor. The advisor diagnoses the problem
+   and writes a concrete fix plan; the coordinator relays it to the workhorse.
+   The advisor writes the plan, not the fix, unless the coordinator decides
+   handing over the implementation is cheaper than another workhorse round.
+4. **Ticket review — two flagships, xhigh.** Each ticket gets two independent
+   reviews, one per flagship family. Each reviewer is a fresh session that
+   neither wrote nor advised on the work, and receives only the ticket spec,
+   its verification standards, the repository standards and the change. The coordinator merges the findings and sends
+   the fixes back to the workhorse, with an advisor's plan when they are
+   non-trivial. A re-review confirms the fixes; one flagship suffices unless
+   the fix was substantial. When the reviewers disagree, an advisor
+   adjudicates.
+5. **Final review and acceptance — frontier, xhigh.** After every ticket is
+   accepted, a fresh frontier session from the family that did not write the
+   spec reviews the whole change against the spec, its verification standards
+   and the repository standards, and runs the full acceptance suite. Its
+   evidence is the basis for the coordinator's acceptance of the spec.
+
+### The light path for small jobs
+
+A small job skips the frontier stages: a single ticket, low risk, with no
+design decision, data-model or contract change, or migration in it. Examples
+are a one-file fix, a doc correction or a routine dependency bump. The
+coordinator writes the ticket spec, including its acceptance criteria and the
+evidence that proves them; a workhorse implements it; and one flagship reviews
+it at xhigh, with an advisor only if needed. If the job turns out larger or
+riskier than it looked, stop and move it to the full lifecycle. When in doubt,
+or when the user asks for it, use the full lifecycle.
+
+### Routing rules
+
+- A finding that the spec, its verification standards or an acceptance test is
+  wrong goes back to a frontier model for a revision of the package, not to a
+  ticket-level patch.
+- When a tier is unavailable, its work may move up a tier, never down. A
+  frontier stage falls back to a flagship only with the user's approval.
 - Order tickets by dependencies and run independent work in parallel when it
   helps and is authorized. Continue within the user's authorized scope without
   routine confirmations; keep explicit owner decision gates.
@@ -94,12 +149,18 @@ evidence for review, not acceptance.
 
 - Check remaining usage before a parallel wave: `orca account list --json`
   (`result.rateLimits`) for Claude and Codex, and ZCode's Usage stats for GLM.
-- The Opus flagship and the Sonnet workhorse share one Claude subscription, as
-  does a coordinator running on Claude. Keep at most one or two heavy Claude
-  workers running at once. Put parallel fan-out on GLM first, then the local
-  cluster within its cap, then Codex.
+- Quota limits every model except the local cluster, which is limited only by
+  concurrency. Spend paid quota where a cheaper tier cannot do the work, and
+  give every paid session a fresh, narrowly scoped brief rather than a long
+  running context.
+- Fable, Opus and Sonnet share one Claude subscription, as does a coordinator
+  running on Claude; Astra, Sol and Terra share one ChatGPT subscription. Keep
+  at most one or two heavy Claude workers running at once, and leave headroom
+  on both subscriptions for the frontier and flagship stages. Put workhorse
+  work on the local cluster first, within its cap; then GLM; then Sonnet or
+  Terra.
 - **Local models: at most 4 concurrent requests.** This limit covers
-  GLM-5.3Flash-EXL3 and any future model served from the homelab cluster,
+  GLM-5.3Flash-EXL3 and any future model (e.g. Deepseek V4.1 Flash 1017) served from the homelab cluster,
   counted across every Run and session using it, helpers included. Beyond 4,
   prefill becomes extremely slow and the service can hang. Orca does not
   enforce this limit, so the coordinator does: count active local workers
@@ -164,20 +225,27 @@ When a GLM/ZCode worker hits a usage limit, the coordinator:
 ## Model and harness designations
 
 "Latest" means the newest model the harness offers at launch; the examples
-below were current in October 2026.
+below were current in November 2026.
 
-- Flagship models, in preferred order:
-  1. Latest Opus via Claude Code (e.g. Opus 5.5).
+- Frontier models, in preferred order. The spec author and the final reviewer
+  use different families, so a full lifecycle uses both:
+  1. Latest Fable via Claude Code (e.g. Fable 5.1).
   2. Latest Astra via Codex (e.g. GPT 6 Astra).
 
+- Flagship models, in preferred order. Ticket reviews use one of each:
+  1. Latest Opus via Claude Code (e.g. Opus 5.5).
+  2. Latest Sol via Codex (e.g. GPT 6.1 Sol).
+
 - Workhorse models, in preferred order:
-  1. Latest Sonnet via Claude Code (e.g. Sonnet 5.5).
-  2. Latest GLM at max effort via ZCode (e.g. GLM 5.3).
-  3. Local model on Ting's homelab DGX Spark cluster via omp (e.g.
-     GLM-5.3Flash-EXL3 under the vllm provider). It is free but has low
+  1. Local model on Ting's homelab DGX Spark cluster via omp (e.g.
+     Deepseek V4.1 Flash 1017 under the vllm provider). It has no quota but low
      concurrency: respect the 4-request cap above and prefer fresh tasks.
-  4. Latest Sol at xhigh effort via Codex (e.g. GPT 6.1 Sol). Deprioritized to
-     reduce use of the ChatGPT subscription. Use it mainly when the local
-     cluster is unsuitable, such as taking over a large existing session.
+  2. Latest GLM at max effort via ZCode (e.g. GLM 5.3).
+  3. Latest Sonnet via Claude Code (e.g. Sonnet 5.5). It draws on the Claude
+     subscription the Fable and Opus stages need.
+  4. Latest Terra at xhigh effort via Codex (e.g. GPT 6.1 Terra). It draws on
+     the ChatGPT subscription the Astra and Sol stages need. Use it mainly when
+     the local cluster is unsuitable, such as taking over a large existing
+     session.
   5. Stopgap only: latest DeepSeek Flash via omp or dsh-tui (deepseek-harness),
      because it bills per API call.
