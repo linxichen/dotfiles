@@ -96,14 +96,16 @@ and, where available, the other family.
    and writes a concrete fix plan; the coordinator relays it to the workhorse.
    The advisor writes the plan, not the fix, unless the coordinator decides
    handing over the implementation is cheaper than another workhorse round.
-4. **Ticket review — two flagships, xhigh.** Each ticket gets two independent
-   reviews, one per flagship family. Each reviewer is a fresh session that
-   neither wrote nor advised on the work, and receives only the ticket spec,
-   its verification standards, the repository standards and the change. The coordinator merges the findings and sends
-   the fixes back to the workhorse, with an advisor's plan when they are
-   non-trivial. A re-review confirms the fixes; one flagship suffices unless
-   the fix was substantial. When the reviewers disagree, an advisor
-   adjudicates.
+4. **Ticket review — one flagship, xhigh.** Each ticket gets one independent
+   review. The reviewer is a fresh session that neither wrote nor advised on
+   the work, and receives only the ticket spec, its verification standards, the
+   repository standards and the change. The coordinator sends the findings back
+   to the workhorse in one batch, with an advisor's plan when they are
+   non-trivial. The coordinator checks the result against the suites and the
+   diff; a re-review happens only if the fix was substantial. Test-only gaps do
+   not block, unless a test is the only guard on something a user would see.
+   Findings need an input a real person could plausibly enter: never chase
+   extreme, implausible inputs. Limit the input's range instead.
 5. **Final review and acceptance — frontier, xhigh.** After every ticket is
    accepted, a fresh frontier session from the family that did not write the
    spec reviews the whole change against the spec, its verification standards
@@ -157,8 +159,18 @@ or when the user asks for it, use the full lifecycle.
   running on Claude; Astra, Sol and Terra share one ChatGPT subscription. Keep
   at most one or two heavy Claude workers running at once, and leave headroom
   on both subscriptions for the frontier and flagship stages. Put workhorse
-  work on the local cluster first, within its cap; then GLM; then Sonnet or
-  Terra.
+  work on the local cluster first, within its cap, and on GLM. Sonnet and
+  Terra are workhorses alongside them, not only fallbacks, while their
+  subscription passes its usage gate. Check the gate in `orca account list
+  --json` before each Sonnet or Terra start:
+  - Sonnet (Claude): more than 40% of the five-hour window remaining
+    (`rateLimits.claude.session.usedPercent` below 60).
+  - Terra (ChatGPT): at least 20% of the weekly window remaining
+    (`rateLimits.codex.weekly.usedPercent` at most 80).
+
+  When a gate fails, start no new workhorse on that subscription; running ones
+  finish their Task. If the window the gate needs is not reported, the gate
+  fails until it is.
 - **Local models: at most 4 concurrent requests.** This limit covers
   GLM-5.3Flash-EXL3 and any future model (e.g. Deepseek V4.1 Flash 1017) served from the homelab cluster,
   counted across every Run and session using it, helpers included. Beyond 4,
@@ -232,11 +244,14 @@ below were current in November 2026.
   1. Latest Fable via Claude Code (e.g. Fable 5.1).
   2. Latest Astra via Codex (e.g. GPT 6 Astra).
 
-- Flagship models, in preferred order. Ticket reviews use one of each:
+- Flagship models, in preferred order. A ticket review uses one of these:
   1. Latest Opus via Claude Code (e.g. Opus 5.5).
   2. Latest Sol via Codex (e.g. GPT 6.1 Sol).
 
-- Workhorse models, in preferred order:
+- Workhorse models. The first four can run side by side; Sonnet and Terra only
+  while their subscription passes its usage gate in "Capacity and
+  concurrency" (Claude: over 40% of the five-hour window left; ChatGPT: at
+  least 20% of the weekly window left):
   1. Local model on Ting's homelab DGX Spark cluster via omp (e.g.
      Deepseek V4.1 Flash 1017 under the vllm provider). It has no quota but low
      concurrency: respect the 4-request cap above and prefer fresh tasks.
@@ -244,8 +259,8 @@ below were current in November 2026.
   3. Latest Sonnet via Claude Code (e.g. Sonnet 5.5). It draws on the Claude
      subscription the Fable and Opus stages need.
   4. Latest Terra at xhigh effort via Codex (e.g. GPT 6.1 Terra). It draws on
-     the ChatGPT subscription the Astra and Sol stages need. Use it mainly when
-     the local cluster is unsuitable, such as taking over a large existing
+     the ChatGPT subscription the Astra and Sol stages need. It also suits work
+     the local cluster cannot take, such as taking over a large existing
      session.
   5. Stopgap only: latest DeepSeek Flash via omp or dsh-tui (deepseek-harness),
      because it bills per API call.
